@@ -10,7 +10,7 @@ from ..menus.schemas import BaseMenu
 
 class SubMenuOutSchema(BaseMenu):
     """
-    Pydantic-схема для вывода данных о меню
+    Pydantic-схема для вывода данных о подменю
 
     Parameters
     ----------

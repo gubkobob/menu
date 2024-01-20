@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Integer, Column, String, DECIMAL, Numeric, ForeignKey
+from sqlalchemy import Integer, Column, String, DECIMAL, Numeric, ForeignKey, FLOAT
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from .database import Base
@@ -49,7 +49,7 @@ class Dish(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
-    price = Column(Numeric(scale=2), index=True)
+    price = Column(Numeric(precision=32, asdecimal=True, decimal_return_scale=2))
     submenu_id = Column(ForeignKey("submenus.id", ondelete="CASCADE"), index=True)
 
     submenu = relationship("Submenu", back_populates="dishes")

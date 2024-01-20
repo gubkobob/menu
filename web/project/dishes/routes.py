@@ -9,28 +9,67 @@ from typing import Union, List
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import SubMenuOutSchema
-from .services import get_submenu, get_submenus, post_submenu, change_submenu, delete_submenu
-from ..menus.schemas import MenuInSchema
+from .schemas import DishOutSchema, DishInSchema
+from .services import get_dish, get_dishes, \
+    post_dish, delete_dish, change_dish
 
 from ..database import get_session
 from ..exeptions import NotFoundException
 from ..schemas_overal import NotFoundSchema, CorrectDeleteSchema
 
-router = APIRouter(prefix="/{target_menu_id}/submenus", tags=["SubMenus"])
+router = APIRouter(prefix="/{target_menu_id}/submenus/{target_submenu_id}/dishes", tags=["Dishes"])
 
 @router.get(
-    "/{target_submenu_id}",
-    summary="Получение подменю по id",
+    "/{target_dish_id}",
+    summary="Получение блюда по id",
     response_description="Сообщение о результате",
-    response_model=Union[SubMenuOutSchema, NotFoundSchema],
+    response_model=Union[DishOutSchema, NotFoundSchema],
     status_code=200,
 )
-async def get_menu_handler(
-    response: Response, target_menu_id: str, target_submenu_id: str, session: AsyncSession = Depends(get_session)
+async def get_dish_handler(
+    response: Response, target_menu_id: str, target_submenu_id: str, target_dish_id: str, session: AsyncSession = Depends(get_session)
 ) -> dict:
     """
-    Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
+    Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
+    \f
+    :param response: Response
+         Обьект ответа на запрос
+    :param target_menu_id: str
+        Идентификатор меню в БД
+    :param target_submenu_id: str
+        Идентификатор подменю в БД
+    :param target_dish_id: str
+        Идентификатор блюда в БД
+    :param session: Asyncsession
+        Экземпляр сессии из sqlalchemy
+
+    :return: Union[DishOutSchema, NotFoundSchema]
+        Pydantic-схема для фронтенда с подменю или ошибкой
+    """
+
+    try:
+        result = await get_dish(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, target_dish_id=target_dish_id)
+    except NotFoundException as e:
+        response.status_code = 404
+        result = e.answer()
+    return result
+
+
+@router.get(
+    "/",
+    summary="Получение всех блюд",
+    response_description="список блюд",
+    response_model=Union[List[DishOutSchema], NotFoundSchema],
+    status_code=200,
+)
+async def get_dishes_handler(
+    response: Response,
+    target_menu_id: str,
+    target_submenu_id: str,
+    session: AsyncSession = Depends(get_session),
+) -> list:
+    """
+    Эндпоинт возвращает все подменю
     \f
     :param response: Response
          Обьект ответа на запрос
@@ -41,45 +80,11 @@ async def get_menu_handler(
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy
 
-    :return: Union[SubMenuOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с подменю или ошибкой
-    """
-
-    try:
-        result = await get_submenu(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
-    except NotFoundException as e:
-        response.status_code = 404
-        result = e.answer()
-    return result
-
-
-@router.get(
-    "/",
-    summary="Получение всех подменю",
-    response_description="список подменю",
-    response_model=Union[List[SubMenuOutSchema], NotFoundSchema],
-    status_code=200,
-)
-async def get_submenus_handler(
-    response: Response,
-    target_menu_id: str,
-    session: AsyncSession = Depends(get_session),
-) -> list:
-    """
-    Эндпоинт возвращает все подменю
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
-
     :return: List[SubMenuOutSchema]
-        Pydantic-схема для фронтенда с подменю
+        Pydantic-схема для фронтенда с блюдами
     """
     try:
-        result = await get_submenus(session=session, target_menu_id=target_menu_id)
+        result = await get_dishes(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -88,15 +93,16 @@ async def get_submenus_handler(
 
 @router.post(
     "/",
-    summary="Публикация подменю",
+    summary="Публикация блюда",
     response_description="Сообщение о результате",
-    response_model=Union[SubMenuOutSchema, dict],
+    response_model=Union[DishOutSchema, dict],
     status_code=201,
 )
-async def post_menus_handler(
+async def post_dishes_handler(
     response: Response,
     target_menu_id: str,
-    submenu: MenuInSchema,
+    target_submenu_id: str,
+    dish: DishInSchema,
     session: AsyncSession = Depends(get_session),
 ) -> dict | Exception:
     """
@@ -106,35 +112,39 @@ async def post_menus_handler(
          Обьект ответа на запрос
     :param target_menu_id: str
         Идентификатор меню в БД
-    :param submenu: MenuInSchema
-        данные подменю из pedantic-схемы ввода данных
+    :param target_submenu_id: str
+        Идентификатор подменю в БД
+    :param dish: MenuInSchema
+        данные блюда из pedantic-схемы ввода данных
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy
 
-    :return: Union[SubMenuOutSchema, dict]
-        Pydantic-схема для фронтенда с подменю или ошибкой
+    :return: Union[DishOutSchema, dict]
+        Pydantic-схема для фронтенда с блюдом или ошибкой
     """
     try:
-        new_submenu = await post_submenu(
-                session=session, target_menu_id=target_menu_id, title=submenu.title, description=submenu.description
+        new_dish = await post_dish(
+                session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, title=dish.title, description=dish.description, price=dish.price
             )
     except Exception as e:
         return e
-    return new_submenu
+
+    return new_dish
 
 
 @router.patch(
-    "/{target_submenu_id}",
-    summary="Изменение подменю",
+    "/{target_dish_id}",
+    summary="Изменение блюда",
     response_description="Сообщение о результате",
-    response_model=Union[SubMenuOutSchema, NotFoundSchema],
+    response_model=Union[DishOutSchema, NotFoundSchema],
     status_code=200,
 )
-async def patch_submenu_handler(
+async def patch_dish_handler(
     response: Response,
     target_menu_id: str,
     target_submenu_id: str,
-    submenu: MenuInSchema,
+    target_dish_id: str,
+    dish: DishInSchema,
     session: AsyncSession = Depends(get_session),
 ) -> dict:
     """
@@ -146,20 +156,23 @@ async def patch_submenu_handler(
         Идентификатор меню в СУБД
     :param target_submenu_id: str
         Идентификатор подменю в СУБД
-    :param submenu: MenuInSchema
-        данные подменю из pedantic-схемы ввода данных
+    :param target_dish_id: str
+        Идентификатор блюда в БД
+    :param dish: DishInSchema
+        данные блюда из pedantic-схемы ввода данных
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy
 
-    :return: Union[SubMenuOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с меню или ошибкой
+    :return: Union[DishOutSchema, NotFoundSchema]
+        Pydantic-схема для фронтенда с блюдом или ошибкой
     """
 
     try:
-        changed_submenu = await change_submenu(
-            session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, title=submenu.title, description=submenu.description
+        changed_dish = await change_dish(
+            session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, target_dish_id=target_dish_id,
+            title=dish.title, description=dish.description, price=dish.price
         )
-        return changed_submenu
+        return changed_dish
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -167,20 +180,21 @@ async def patch_submenu_handler(
 
 
 @router.delete(
-    "/{target_submenu_id}",
-    summary="Удаление подменю",
+    "/{target_dish_id}",
+    summary="Удаление блюда",
     response_description="Сообщение о результате",
     response_model=Union[CorrectDeleteSchema, NotFoundSchema],
     status_code=200,
 )
-async def delete_submenu_handler(
+async def delete_dish_handler(
     response: Response,
     target_menu_id: str,
     target_submenu_id: str,
+    target_dish_id: str,
     session: AsyncSession = Depends(get_session),
 ) -> dict:
     """
-    Эндпоинт удаления подменю по его id
+    Эндпоинт удаления блюда по его id
     \f
     :param response: Response
          Обьект ответа на запрос
@@ -188,6 +202,8 @@ async def delete_submenu_handler(
         Идентификатор меню в СУБД
     :param target_submenu_id: str
         Идентификатор подменю в СУБД
+    :param target_dish_id: str
+        Идентификатор блюда в БД
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy
 
@@ -195,8 +211,8 @@ async def delete_submenu_handler(
         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
-        await delete_submenu(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
-        return {"status": True, "message": "The submenu has been deleted"}
+        await delete_dish(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, target_dish_id=target_dish_id)
+        return {"status": True, "message": "The dish has been deleted"}
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()

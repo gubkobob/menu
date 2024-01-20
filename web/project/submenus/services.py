@@ -61,7 +61,6 @@ async def change_submenu(
     session: AsyncSession, target_menu_id: str, target_submenu_id:str, title: str, description: str
 ) -> dict:
 
-    await get_menu(session=session, target_menu_id=target_menu_id)
     await get_submenu(session=session, target_submenu_id=target_submenu_id, target_menu_id=target_menu_id)
 
     await session.execute(update(Submenu).values(title=title, description=description).where(Submenu.id == target_submenu_id))

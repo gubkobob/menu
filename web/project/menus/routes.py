@@ -89,7 +89,7 @@ async def post_menus_handler(
     response: Response,
     menu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> dict | Exception:
     """
     Эндпоинт публикации меню
     \f
@@ -103,10 +103,12 @@ async def post_menus_handler(
     :return: Union[MenuOutSchema, dict]
         Pydantic-схема для фронтенда с меню или ошибкой
     """
-    new_menu = await post_menu(
-            session=session, title=menu.title, description=menu.description
-        )
-
+    try:
+        new_menu = await post_menu(
+                session=session, title=menu.title, description=menu.description
+            )
+    except Exception as e:
+         return e
     return new_menu
 
 
