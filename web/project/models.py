@@ -27,7 +27,7 @@ class Menu(Base):
 class Submenu(Base):
     __tablename__: str = "submenus"
 
-    id = Column(Integer, primary_key=True, index=True, unique=True)
+    id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
     menu_id = Column(ForeignKey("menus.id", ondelete="CASCADE"), index=True)
@@ -46,7 +46,7 @@ class Submenu(Base):
 class Dish(Base):
     __tablename__: str = "dishes"
 
-    id = Column(Integer, primary_key=True, index=True, unique=True)
+    id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
     price = Column(Numeric(scale=2), index=True)
