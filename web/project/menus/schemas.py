@@ -51,7 +51,7 @@ class MenuOutSchema(BaseMenu):
         Идентификатор пользователя в СУБД
     """
 
-    id: int
+    id: str
 
     class Config:
         orm_mode = True

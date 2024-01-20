@@ -1,13 +1,17 @@
+import uuid
+
 from sqlalchemy import Integer, Column, String, DECIMAL, Numeric, ForeignKey
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.dialects.postgresql import UUID
 from .database import Base
 
+def generate_uuid():
+    return str(uuid.uuid4())
 
 class Menu(Base):
     __tablename__: str = "menus"
 
-    id = Column(Integer, primary_key=True, index=True, unique=True)
+    id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
 

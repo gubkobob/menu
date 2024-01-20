@@ -8,3 +8,8 @@ class NotFoundException(Exception):
         return {
             "detail": self.error_message,
         }
+
+    def answer(self):
+        return {
+            "detail": self.error_message,
+        }

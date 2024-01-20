@@ -9,23 +9,38 @@ schemas.py
 from pydantic import BaseModel
 
 
-class ErrorSchema(BaseModel):
+class NotFoundSchema(BaseModel):
     """
-    Pydantic-схема ошибки бекенда
+    Pydantic-схема результата запроса не найдено
+
+    Parameters
+    ----------
+
+    detail: str
+        детали ответа
+
+    """
+
+    detail: str
+
+    class Config:
+        orm_mode = True
+
+
+class CorrectDeleteSchema(BaseModel):
+    """
+    Pydantic-схема ответа об удалении
 
     Parameters
     ----------
     result: bool
-        Флаг не успешного выполнения операции
-    error_type: str
-        Тип ошибки
-    error_message: str
-        Сообщение об ошибке
+        Флаг успешного выполнения операции
+    message: str
+        сообщение
     """
 
-    result: bool = False
-    error_type: str
-    error_message: str
+    result: bool = True
+    message: str
 
     class Config:
         orm_mode = True
