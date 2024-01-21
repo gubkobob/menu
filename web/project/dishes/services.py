@@ -23,9 +23,10 @@ async def get_dish(session: AsyncSession, target_menu_id: str, target_submenu_id
 
 
 async def get_dishes(session: AsyncSession, target_menu_id: str, target_submenu_id: str) -> list:
-    await get_submenu(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
     q = await session.execute(select(Dish).where(Dish.submenu_id == target_submenu_id, Dish.submenu.has(Submenu.menu_id == target_menu_id)))
     dishes = q.scalars().all()
+    if not dishes:
+        return []
     return dishes
 
 
