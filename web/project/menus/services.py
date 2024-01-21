@@ -1,27 +1,69 @@
 
-from sqlalchemy import select, insert, delete, update
+from sqlalchemy import select, insert, delete, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload, selectinload
 
 from ..exeptions import  NotFoundException
 from .schemas import MenuOutSchema
-from ..models import Menu
+from ..models import Menu, Submenu, Dish
 
 
 async def get_menu(session: AsyncSession, target_menu_id: str) -> dict:
-    q = await session.execute(
-        select(Menu).where(Menu.id == target_menu_id)
-    )
-    menu = q.scalars().one_or_none()
-    if not menu:
+
+    q = (
+        select(
+            Menu,
+            func.count(Submenu.id).label("submenus_count"),
+            func.count(Dish.id).label("dishes_count"),
+        )
+         .where(Menu.id == target_menu_id)
+         .join(Submenu, Submenu.menu_id == Menu.id, isouter=True)
+         .join(Dish, Dish.submenu_id == Submenu.id, isouter=True)
+         .group_by(Menu.id)
+         )
+    res_q = await session.execute(q)
+    result = res_q.one_or_none()
+    if not result:
         raise NotFoundException(
             error_type="NO MENU", error_message="menu not found"
         )
+    menu = result[0]
+    count_submenu = result[1]
+    count_dishes = result[2]
+    menu.submenus_count = count_submenu
+    menu.dishes_count = count_dishes
+
+    print("*******************************************")
+    print(res_q)
+    print(result)
+    print(menu)
+    print(count_submenu)
+    print(q)
+    print("*******************************************")
+
+
     return menu
 
 
 async def get_menus(session: AsyncSession) -> list:
-    q = await session.execute(select(Menu))
-    menus = q.scalars().all()
+
+    q = (select(Menu, func.count(Submenu.id).label("submenus_count"), func.count(Dish.id).label("dishes_count"))
+         .join(Submenu, isouter=True,)
+         .join(Submenu, Submenu.menu_id == Menu.id, isouter=True)
+         .join(Dish, Dish.submenu_id == Submenu.id, isouter=True)
+         .group_by(Menu.id)
+         )
+    res_q = await session.execute(q)
+    results = res_q.all()
+    menus = []
+    for result in results:
+        menu = result[0]
+        count_submenu = result[1]
+        menu.submenus_count = count_submenu
+        menus.append(menu)
+    print("*******************************************")
+    print(results)
+    print("*******************************************")
     return menus
 
 

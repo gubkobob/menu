@@ -69,7 +69,7 @@ async def get_dishes_handler(
     session: AsyncSession = Depends(get_session),
 ) -> list:
     """
-    Эндпоинт возвращает все подменю
+    Эндпоинт возвращает все блюда
     \f
     :param response: Response
          Обьект ответа на запрос

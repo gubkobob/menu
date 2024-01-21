@@ -14,6 +14,7 @@ class Menu(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
+    # submenus_count = Column(Integer)
 
     submenus = relationship(
         "Submenu",
@@ -21,7 +22,8 @@ class Menu(Base):
         cascade="all, delete",
         passive_deletes=True,
     )
-
+    def __repr__(self):
+        return str({c.name: getattr(self, c.name) for c in self.__table__.columns})
 
 
 class Submenu(Base):
@@ -49,7 +51,7 @@ class Dish(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
-    price = Column(Numeric(precision=32, asdecimal=True, decimal_return_scale=2))
+    price = Column(DECIMAL(scale=2, precision=32, asdecimal=True, decimal_return_scale=2))
     submenu_id = Column(ForeignKey("submenus.id", ondelete="CASCADE"), index=True)
 
     submenu = relationship("Submenu", back_populates="dishes")

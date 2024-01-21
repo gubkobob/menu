@@ -1,3 +1,4 @@
+from decimal import Decimal
 
 from sqlalchemy import select, insert, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -29,7 +30,7 @@ async def get_dishes(session: AsyncSession, target_menu_id: str, target_submenu_
 
 
 async def post_dish(
-    session: AsyncSession, target_menu_id: str, target_submenu_id: str, title: str, description: str, price: int
+    session: AsyncSession, target_menu_id: str, target_submenu_id: str, title: str, description: str, price: str
 ) -> dict:
     submenu = await get_submenu(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
 
