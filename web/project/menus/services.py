@@ -1,5 +1,5 @@
 
-from sqlalchemy import select, insert, delete, update, func
+from sqlalchemy import select, insert, delete, update, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -13,12 +13,12 @@ async def get_menu(session: AsyncSession, target_menu_id: str) -> dict:
     q = (
         select(
             Menu,
-            func.count(Submenu.id).label("submenus_count"),
-            func.count(Dish.id).label("dishes_count"),
+            func.count(distinct(Submenu.id)).label("submenus_count"),
+            func.count(distinct(Dish.id)).label("dishes_count"),
         )
          .where(Menu.id == target_menu_id)
-         .join(Submenu, Submenu.menu_id == Menu.id, isouter=True)
-         .join(Dish, Dish.submenu_id == Submenu.id, isouter=True)
+         .outerjoin(Submenu, Submenu.menu_id == Menu.id)
+         .outerjoin(Dish, Dish.submenu_id == Submenu.id)
          .group_by(Menu.id)
          )
     res_q = await session.execute(q)
@@ -47,10 +47,9 @@ async def get_menu(session: AsyncSession, target_menu_id: str) -> dict:
 
 async def get_menus(session: AsyncSession) -> list:
 
-    q = (select(Menu, func.count(Submenu.id).label("submenus_count"), func.count(Dish.id).label("dishes_count"))
-         .join(Submenu, isouter=True,)
-         .join(Submenu, Submenu.menu_id == Menu.id, isouter=True)
-         .join(Dish, Dish.submenu_id == Submenu.id, isouter=True)
+    q = (select(Menu, func.count(distinct(Submenu.id)).label("submenus_count"), func.count(distinct(Dish.id)).label("dishes_count"))
+         .outerjoin(Submenu, Menu.id == Submenu.menu_id)
+         .outerjoin(Dish, Dish.submenu_id == Submenu.id)
          .group_by(Menu.id)
          )
     res_q = await session.execute(q)
@@ -59,7 +58,9 @@ async def get_menus(session: AsyncSession) -> list:
     for result in results:
         menu = result[0]
         count_submenu = result[1]
+        count_dishes = result[2]
         menu.submenus_count = count_submenu
+        menu.dishes_count = count_dishes
         menus.append(menu)
     print("*******************************************")
     print(results)
