@@ -17,7 +17,7 @@ from ..database import get_session
 from ..exeptions import NotFoundException
 from ..schemas_overal import NotFoundSchema, CorrectDeleteSchema
 
-router = APIRouter(prefix="/{target_menu_id}/submenus/{target_submenu_id}/dishes", tags=["Dishes"])
+router = APIRouter(prefix="/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes", tags=["Dishes"])
 
 @router.get(
     "/{target_dish_id}",

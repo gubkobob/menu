@@ -12,7 +12,7 @@ api_router.include_router(routes_submenus.router)
 api_router.include_router(routes_dishes.router)
 
 app = FastAPI()
-app.include_router(api_router, prefix="/api/v1/menus")
+app.include_router(api_router, prefix="/api/v1")
 
 # app.add_middleware(
 #     CORSMiddleware,
