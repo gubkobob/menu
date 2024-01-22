@@ -31,7 +31,7 @@
 ## 4. Установка и запуск
    
 ### Клонируйте репозитторий и перейдите в корень проекта:
-- git clone https://github.com/gubkobob/menu
+- git clone https://github.com/gubkobob/menu.git
 - cd menu
 ### Создайте .env файл с переменными:
 - POSTGRES_USER=admin
