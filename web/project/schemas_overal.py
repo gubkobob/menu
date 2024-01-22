@@ -46,14 +46,3 @@ class CorrectDeleteSchema(BaseModel):
         orm_mode = True
 
 
-class OnlyResult(BaseModel):
-    """
-    Pydantic-схема выдачи только результата выполнения операции
-
-    Parameters
-    ----------
-    result: bool
-        Флаг выполнения операции
-    """
-
-    result: bool

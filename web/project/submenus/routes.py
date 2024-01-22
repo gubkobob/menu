@@ -1,7 +1,7 @@
 """
 routes.py
 ----------
-Модуль реализует эндпоинты FastApi для взамодействия с меню верхнего уровня.
+Модуль реализует эндпоинты FastApi для взамодействия с подменю.
 
 """
 
@@ -75,8 +75,8 @@ async def get_submenus_handler(
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy
 
-    :return: List[SubMenuOutSchema]
-        Pydantic-схема для фронтенда с подменю
+    :return: Union[List[SubMenuOutSchema], NotFoundSchema]
+        Pydantic-схема для фронтенда с подменю или ошибка
     """
     try:
         result = await get_submenus(session=session, target_menu_id=target_menu_id)
@@ -152,7 +152,7 @@ async def patch_submenu_handler(
         Экземпляр сессии из sqlalchemy
 
     :return: Union[SubMenuOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с меню или ошибкой
+        Pydantic-схема для фронтенда с подменю или ошибкой
     """
 
     try:

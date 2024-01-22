@@ -5,9 +5,8 @@ routes.py
 
 """
 
-from typing import Union, List, Any
-from fastapi.responses import JSONResponse
-from fastapi import APIRouter, Depends, Header, Response
+from typing import Union, List
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..menus.schemas import MenuOutSchema, MenuInSchema

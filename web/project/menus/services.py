@@ -1,10 +1,7 @@
 
 from sqlalchemy import select, insert, delete, update, func, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload, selectinload
-
 from ..exeptions import  NotFoundException
-from .schemas import MenuOutSchema
 from ..models import Menu, Submenu, Dish
 
 
@@ -32,16 +29,6 @@ async def get_menu(session: AsyncSession, target_menu_id: str) -> dict:
     count_dishes = result[2]
     menu.submenus_count = count_submenu
     menu.dishes_count = count_dishes
-
-    print("*******************************************")
-    print(res_q)
-    print(result)
-    print(menu)
-    print(count_submenu)
-    print(q)
-    print("*******************************************")
-
-
     return menu
 
 
@@ -62,9 +49,6 @@ async def get_menus(session: AsyncSession) -> list:
         menu.submenus_count = count_submenu
         menu.dishes_count = count_dishes
         menus.append(menu)
-    print("*******************************************")
-    print(results)
-    print("*******************************************")
     return menus
 
 

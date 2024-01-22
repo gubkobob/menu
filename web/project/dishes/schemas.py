@@ -5,8 +5,6 @@ schemas.py
  и обмена данных между сервисами.
 
 """
-import decimal
-
 from ..menus.schemas import BaseMenu
 
 class DishInSchema(BaseMenu):
@@ -15,7 +13,7 @@ class DishInSchema(BaseMenu):
 
     Parameters
     ----------
-    price: float
+    price: str
         Цена блюда
     """
 

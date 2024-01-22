@@ -6,14 +6,7 @@ schemas.py
 
 """
 
-from typing import List, Optional
-
-from pydantic import BaseModel, Field, validator
-from pydantic.schema import Sequence
-from sqlalchemy.ext.associationproxy import _AssociationList
-
-
-
+from pydantic import BaseModel
 
 class BaseMenu(BaseModel):
     """

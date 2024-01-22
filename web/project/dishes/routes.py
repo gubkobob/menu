@@ -1,7 +1,7 @@
 """
 routes.py
 ----------
-Модуль реализует эндпоинты FastApi для взамодействия с меню верхнего уровня.
+Модуль реализует эндпоинты FastApi для взамодействия с блюдами.
 
 """
 
@@ -44,7 +44,7 @@ async def get_dish_handler(
         Экземпляр сессии из sqlalchemy
 
     :return: Union[DishOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с подменю или ошибкой
+        Pydantic-схема для фронтенда с блюдом или ошибкой
     """
 
     try:
@@ -59,7 +59,7 @@ async def get_dish_handler(
     "/",
     summary="Получение всех блюд",
     response_description="список блюд",
-    response_model=Union[List[DishOutSchema], NotFoundSchema],
+    response_model=List[DishOutSchema],
     status_code=200,
 )
 async def get_dishes_handler(
@@ -80,7 +80,7 @@ async def get_dishes_handler(
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy
 
-    :return: List[SubMenuOutSchema]
+    :return: List[DishOutSchema]
         Pydantic-схема для фронтенда с блюдами
     """
     try:
@@ -114,7 +114,7 @@ async def post_dishes_handler(
         Идентификатор меню в БД
     :param target_submenu_id: str
         Идентификатор подменю в БД
-    :param dish: MenuInSchema
+    :param dish: DishInSchema
         данные блюда из pedantic-схемы ввода данных
     :param session: Asyncsession
         Экземпляр сессии из sqlalchemy

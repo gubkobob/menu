@@ -1,4 +1,4 @@
-from decimal import Decimal
+from typing import Sequence
 
 from sqlalchemy import select, insert, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +22,7 @@ async def get_dish(session: AsyncSession, target_menu_id: str, target_submenu_id
     return dish
 
 
-async def get_dishes(session: AsyncSession, target_menu_id: str, target_submenu_id: str) -> list:
+async def get_dishes(session: AsyncSession, target_menu_id: str, target_submenu_id: str) -> Sequence[Dish]:
     q = await session.execute(select(Dish).where(Dish.submenu_id == target_submenu_id, Dish.submenu.has(Submenu.menu_id == target_menu_id)))
     dishes = q.scalars().all()
     if not dishes:
@@ -62,7 +62,7 @@ async def delete_dish(session: AsyncSession, target_menu_id: str, target_submenu
 
 async def change_dish(
     session: AsyncSession, target_menu_id: str, target_submenu_id: str, target_dish_id: str,
-        title: str, description: str, price: float
+        title: str, description: str, price: str
 ) -> dict:
 
     await get_dish(session=session, target_submenu_id=target_submenu_id, target_menu_id=target_menu_id, target_dish_id=target_dish_id)

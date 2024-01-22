@@ -1,8 +1,7 @@
 import uuid
 
-from sqlalchemy import Integer, Column, String, DECIMAL, Numeric, ForeignKey, FLOAT
+from sqlalchemy import Column, String, DECIMAL, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.dialects.postgresql import UUID
 from .database import Base
 
 def generate_uuid():
@@ -14,7 +13,6 @@ class Menu(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
-    # submenus_count = Column(Integer)
 
     submenus = relationship(
         "Submenu",
@@ -22,8 +20,6 @@ class Menu(Base):
         cascade="all, delete",
         passive_deletes=True,
     )
-    def __repr__(self):
-        return str({c.name: getattr(self, c.name) for c in self.__table__.columns})
 
 
 class Submenu(Base):
