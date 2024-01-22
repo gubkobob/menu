@@ -31,13 +31,14 @@
 ## 4. Установка и запуск
    
 ### Клонируйте репозитторий и перейдите в корень проекта:
-- git clone ....
+- git clone https://github.com/gubkobob/menu
 - cd menu
 ### Создайте .env файл с переменными:
 - POSTGRES_USER=admin
 - POSTGRES_PASSWORD=admin
 
 ### Выполните команду для запуска проекта:
+## Только для Unix систем!!!
 - docker compose up --build
 ### Для ручного тестирования эндпоинтов проекта удобно пользоваться следующим URL:
 - http://127.0.0.1:8000/docs
