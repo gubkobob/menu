@@ -44,5 +44,3 @@ class CorrectDeleteSchema(BaseModel):
 
     class Config:
         orm_mode = True
-
-

@@ -5,19 +5,26 @@ routes.py
 
 """
 
-from typing import Union, List
+from typing import List, Union
+
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import SubMenuOutSchema
-from .services import get_submenu, get_submenus, post_submenu, change_submenu, delete_submenu
-from ..menus.schemas import MenuInSchema
-
 from ..database import get_session
 from ..exeptions import NotFoundException
-from ..schemas_overal import NotFoundSchema, CorrectDeleteSchema
+from ..menus.schemas import MenuInSchema
+from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
+from .schemas import SubMenuOutSchema
+from .services import (
+    change_submenu,
+    delete_submenu,
+    get_submenu,
+    get_submenus,
+    post_submenu,
+)
 
 router = APIRouter(prefix="/menus/{target_menu_id}/submenus", tags=["SubMenus"])
+
 
 @router.get(
     "/{target_submenu_id}",
@@ -27,7 +34,10 @@ router = APIRouter(prefix="/menus/{target_menu_id}/submenus", tags=["SubMenus"])
     status_code=200,
 )
 async def get_menu_handler(
-    response: Response, target_menu_id: str, target_submenu_id: str, session: AsyncSession = Depends(get_session)
+    response: Response,
+    target_menu_id: str,
+    target_submenu_id: str,
+    session: AsyncSession = Depends(get_session),
 ) -> dict:
     """
     Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
@@ -46,7 +56,11 @@ async def get_menu_handler(
     """
 
     try:
-        result = await get_submenu(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
+        result = await get_submenu(
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+        )
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -116,8 +130,11 @@ async def post_menus_handler(
     """
     try:
         new_submenu = await post_submenu(
-                session=session, target_menu_id=target_menu_id, title=submenu.title, description=submenu.description
-            )
+            session=session,
+            target_menu_id=target_menu_id,
+            title=submenu.title,
+            description=submenu.description,
+        )
     except Exception as e:
         return e
     return new_submenu
@@ -157,7 +174,11 @@ async def patch_submenu_handler(
 
     try:
         changed_submenu = await change_submenu(
-            session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, title=submenu.title, description=submenu.description
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+            title=submenu.title,
+            description=submenu.description,
         )
         return changed_submenu
     except NotFoundException as e:
@@ -195,7 +216,11 @@ async def delete_submenu_handler(
         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
-        await delete_submenu(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
+        await delete_submenu(
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+        )
         return {"status": True, "message": "The submenu has been deleted"}
     except NotFoundException as e:
         response.status_code = 404

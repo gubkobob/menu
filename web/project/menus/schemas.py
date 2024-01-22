@@ -8,6 +8,7 @@ schemas.py
 
 from pydantic import BaseModel
 
+
 class BaseMenu(BaseModel):
     """
     Базовая Pydantic-схема меню
@@ -52,8 +53,3 @@ class MenuOutSchema(BaseMenu):
 
     class Config:
         orm_mode = True
-
-
-
-
-

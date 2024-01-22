@@ -7,6 +7,7 @@ schemas.py
 """
 from ..menus.schemas import BaseMenu
 
+
 class DishInSchema(BaseMenu):
     """
     Pydantic-схема меню для ввода данных блюда
@@ -34,8 +35,3 @@ class DishOutSchema(DishInSchema):
 
     class Config:
         orm_mode = True
-
-
-
-
-

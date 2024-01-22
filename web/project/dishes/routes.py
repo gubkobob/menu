@@ -5,19 +5,22 @@ routes.py
 
 """
 
-from typing import Union, List
+from typing import List, Union
+
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import DishOutSchema, DishInSchema
-from .services import get_dish, get_dishes, \
-    post_dish, delete_dish, change_dish
-
 from ..database import get_session
 from ..exeptions import NotFoundException
-from ..schemas_overal import NotFoundSchema, CorrectDeleteSchema
+from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
+from .schemas import DishInSchema, DishOutSchema
+from .services import change_dish, delete_dish, get_dish, get_dishes, post_dish
 
-router = APIRouter(prefix="/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes", tags=["Dishes"])
+router = APIRouter(
+    prefix="/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes",
+    tags=["Dishes"],
+)
+
 
 @router.get(
     "/{target_dish_id}",
@@ -27,7 +30,11 @@ router = APIRouter(prefix="/menus/{target_menu_id}/submenus/{target_submenu_id}/
     status_code=200,
 )
 async def get_dish_handler(
-    response: Response, target_menu_id: str, target_submenu_id: str, target_dish_id: str, session: AsyncSession = Depends(get_session)
+    response: Response,
+    target_menu_id: str,
+    target_submenu_id: str,
+    target_dish_id: str,
+    session: AsyncSession = Depends(get_session),
 ) -> dict:
     """
     Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
@@ -48,7 +55,12 @@ async def get_dish_handler(
     """
 
     try:
-        result = await get_dish(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, target_dish_id=target_dish_id)
+        result = await get_dish(
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+            target_dish_id=target_dish_id,
+        )
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -84,7 +96,11 @@ async def get_dishes_handler(
         Pydantic-схема для фронтенда с блюдами
     """
     try:
-        result = await get_dishes(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
+        result = await get_dishes(
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+        )
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -124,8 +140,13 @@ async def post_dishes_handler(
     """
     try:
         new_dish = await post_dish(
-                session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, title=dish.title, description=dish.description, price=dish.price
-            )
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+            title=dish.title,
+            description=dish.description,
+            price=dish.price,
+        )
     except Exception as e:
         return e
 
@@ -169,8 +190,13 @@ async def patch_dish_handler(
 
     try:
         changed_dish = await change_dish(
-            session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, target_dish_id=target_dish_id,
-            title=dish.title, description=dish.description, price=dish.price
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+            target_dish_id=target_dish_id,
+            title=dish.title,
+            description=dish.description,
+            price=dish.price,
         )
         return changed_dish
     except NotFoundException as e:
@@ -211,7 +237,12 @@ async def delete_dish_handler(
         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
-        await delete_dish(session=session, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id, target_dish_id=target_dish_id)
+        await delete_dish(
+            session=session,
+            target_menu_id=target_menu_id,
+            target_submenu_id=target_submenu_id,
+            target_dish_id=target_dish_id,
+        )
         return {"status": True, "message": "The dish has been deleted"}
     except NotFoundException as e:
         response.status_code = 404

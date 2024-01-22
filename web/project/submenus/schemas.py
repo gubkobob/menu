@@ -25,8 +25,3 @@ class SubMenuOutSchema(BaseMenu):
 
     class Config:
         orm_mode = True
-
-
-
-
-

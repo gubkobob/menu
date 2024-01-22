@@ -5,18 +5,19 @@ routes.py
 
 """
 
-from typing import Union, List
+from typing import List, Union
+
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..menus.schemas import MenuOutSchema, MenuInSchema
-from ..menus.services import get_menu, get_menus, post_menu, delete_menu, change_menu
-
 from ..database import get_session
 from ..exeptions import NotFoundException
-from ..schemas_overal import NotFoundSchema, CorrectDeleteSchema
+from ..menus.schemas import MenuInSchema, MenuOutSchema
+from ..menus.services import change_menu, delete_menu, get_menu, get_menus, post_menu
+from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 
 router = APIRouter(prefix="/menus", tags=["Menus"])
+
 
 @router.get(
     "/{target_menu_id}",
@@ -26,7 +27,9 @@ router = APIRouter(prefix="/menus", tags=["Menus"])
     status_code=200,
 )
 async def get_menu_handler(
-    response: Response, target_menu_id: str, session: AsyncSession = Depends(get_session)
+    response: Response,
+    target_menu_id: str,
+    session: AsyncSession = Depends(get_session),
 ) -> dict:
     """
     Эндпоинт возвращает меню по идентификатору или сообщение об ошибке
@@ -104,10 +107,10 @@ async def post_menus_handler(
     """
     try:
         new_menu = await post_menu(
-                session=session, title=menu.title, description=menu.description
-            )
+            session=session, title=menu.title, description=menu.description
+        )
     except Exception as e:
-         return e
+        return e
     return new_menu
 
 
@@ -142,7 +145,10 @@ async def patch_menu_handler(
 
     try:
         changed_menu = await change_menu(
-            session=session, target_menu_id=target_menu_id, title=menu.title, description=menu.description
+            session=session,
+            target_menu_id=target_menu_id,
+            title=menu.title,
+            description=menu.description,
         )
         return changed_menu
     except NotFoundException as e:

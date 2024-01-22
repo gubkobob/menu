@@ -1,4 +1,3 @@
-
 class NotFoundException(Exception):
     def __init__(self, error_type: str, error_message: str, *args, **kwargs):
         self.error_type = error_type
