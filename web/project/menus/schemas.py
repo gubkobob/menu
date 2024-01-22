@@ -6,27 +6,19 @@ schemas.py
 
 """
 
-from typing import List, Optional
-
-from pydantic import BaseModel, Field, validator
-from pydantic.schema import Sequence
-from sqlalchemy.ext.associationproxy import _AssociationList
-
-
+from pydantic import BaseModel
 
 
 class BaseMenu(BaseModel):
     """
-    Базовая Pydantic-схема пользователя
+    Базовая Pydantic-схема меню
 
     Parameters
     ----------
-    api_key: str
-        api_key пользователя
-    name: str
-        Имя пользователя
-    password: str, optional
-        Пароль аккаунта пользователя
+    title: str
+        Название меню
+    description: str
+        Описание меню
     """
 
     title: str
@@ -35,7 +27,7 @@ class BaseMenu(BaseModel):
 
 class MenuInSchema(BaseMenu):
     """
-    Pydantic-схема пользователя для ввода данных
+    Pydantic-схема меню для ввода данных
     """
 
     ...
@@ -43,20 +35,21 @@ class MenuInSchema(BaseMenu):
 
 class MenuOutSchema(BaseMenu):
     """
-    Pydantic-схема для вывода данных о пользователе
+    Pydantic-схема для вывода данных о меню
 
     Parameters
     ----------
-    id: int
-        Идентификатор пользователя в СУБД
+    id: str
+        Идентификатор меню в СУБД
+    submenus_count: int
+        количество подменю в меню
+    dishes_count: int
+        количество блюд во всех подменю, входящих в меню
     """
 
-    id: int
+    id: str
+    submenus_count: int = 0
+    dishes_count: int = 0
 
     class Config:
         orm_mode = True
-
-
-
-
-
