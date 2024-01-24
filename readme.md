@@ -34,8 +34,11 @@
 - git clone https://github.com/gubkobob/menu.git
 - cd menu
 ### Создайте .env файл с переменными:
-- POSTGRES_USER=admin
-- POSTGRES_PASSWORD=admin
+  - DB_HOST=db
+  - DB_PORT=5432
+  - POSTGRES_DB=postgres
+  - POSTGRES_USER=admin
+  - POSTGRES_PASSWORD=admin
 
 ### Выполните команду для запуска проекта:
 #### Только для Unix систем!!!
