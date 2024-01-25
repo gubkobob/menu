@@ -39,7 +39,7 @@ class CorrectDeleteSchema(BaseModel):
         сообщение
     """
 
-    result: bool = True
+    status: bool = True
     message: str
 
     class Config:
