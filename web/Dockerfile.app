@@ -11,4 +11,4 @@ COPY ./requirements.txt /usr/src/app/requirements.txt
 
 COPY . /usr/src/app/
 
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/app/app_entrypoint.sh"]

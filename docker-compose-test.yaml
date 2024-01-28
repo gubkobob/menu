@@ -1,56 +1,19 @@
-version: '3.5'
+version: '3.7'
 
 services:
 
-  web:
-    container_name: "web"
-    build: ./web
+  test:
+    container_name: "test"
+    build:
+      context: ./web
+      dockerfile: Dockerfile.test
     env_file:
       - .env
-    volumes:
-      - ./web/:/usr/src/app/
-    ports:
-      - 8000:1111
     networks:
       - custom
     depends_on:
-      db_test:
-        condition: service_healthy
+      - db_test
 
-  test_api:
-    container_name: "test_api"
-    build:
-      context: /usr/src/app
-      dockerfile: /web/Dockerfile.test
-    env_file:
-      - .env
-#    volumes:
-#      - ./web/:/usr/src/app/
-#    ports:
-#      - 8000:1111
-#    networks:
-#      - custom
-    depends_on:
-      - web
-
-
-#  db:
-#    container_name: "db"
-#    image: postgres:15.1-alpine
-#    volumes:
-#      - ./db_dev/:/var/lib/postgresql/data/
-#    env_file:
-#      - .env
-#    ports:
-#      - '5432:5432'
-#    networks:
-#      - custom
-#    healthcheck:
-#      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
-#      interval: 5s
-#      timeout: 30s
-#      retries: 10
-#      start_period: 70s
 
   db_test:
     container_name: "db_test"
@@ -74,9 +37,6 @@ services:
       start_period: 70s
 
 
-#volumes:
-#  db_dev:
-#    name: db_dev
 
 networks:
   custom:

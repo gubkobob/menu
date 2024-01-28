@@ -15,10 +15,7 @@ mkdir -p alembic/versions
 alembic revision --message="Init migration" --autogenerate
 alembic upgrade head
 
-
 uvicorn project.main:app --port=1111 --host='0.0.0.0' --reload
 #gunicorn project.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind=0.0.0.0:1111
-
-
 
 exec "$@"

@@ -34,16 +34,27 @@
 - git clone https://github.com/gubkobob/menu.git
 - cd menu
 ### Создайте .env файл с переменными:
-  - DB_HOST=db
-  - DB_PORT=5432
-  - POSTGRES_DB=postgres
-  - POSTGRES_USER=admin
-  - POSTGRES_PASSWORD=admin
+- DB_HOST=db
+- DB_PORT=5432
+- POSTGRES_DB=postgres
+- POSTGRES_USER=admin
+- POSTGRES_PASSWORD=admin
+
+- DB_HOST_TEST=db_test
+- DB_PORT_TEST=6000
+- POSTGRES_DB_TEST=postgres_test
+- POSTGRES_USER_TEST=admin
+- POSTGRES_PASSWORD_TEST=admin
 
 ### Выполните команду для запуска проекта:
 #### Только для Unix систем!!!
 - docker compose up --build
+### Выполните команду для запуска тестов в отдельном когнтейнере:
+#### Только для Unix систем!!!
+- docker compose -f docker-compose-test.yaml up --build
 ### Для ручного тестирования эндпоинтов проекта удобно пользоваться следующим URL:
 - http://127.0.0.1:8000/docs
+### Запрос на получение всех меню с количеством подменю и блюд находится:
+- menu/web/project/menus/services.py -> get_menu
 
 
