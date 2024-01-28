@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+
+  test:
+    container_name: "test"
+    build:
+      context: ./web
+      dockerfile: Dockerfile.test
+    env_file:
+      - .env
+    networks:
+      - custom
+    depends_on:
+      - db_test
+
+
+  db_test:
+    container_name: "db_test"
+    image: postgres:15.1-alpine
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB_TEST}
+      POSTGRES_USER: ${POSTGRES_USER_TEST}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
+    command: -p ${DB_PORT_TEST}
+    expose:
+      - ${DB_PORT_TEST}
+    networks:
+      - custom
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER_TEST} -d ${POSTGRES_DB_TEST}'"]
+      interval: 5s
+      timeout: 30s
+      retries: 10
+      start_period: 70s
+
+
+
+networks:
+  custom:
+    driver: bridge

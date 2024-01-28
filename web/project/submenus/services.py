@@ -11,7 +11,12 @@ async def get_submenu(
 ) -> dict:
     await get_menu(session=session, target_menu_id=target_menu_id)
     q = await session.execute(
-        select(Submenu, func.count(Dish.id).label("dishes_count"))
+        select(
+            Submenu.id,
+            Submenu.description,
+            Submenu.title,
+            func.count(Dish.id).label("dishes_count"),
+        )
         .where(Submenu.id == target_submenu_id, Submenu.menu_id == target_menu_id)
         .join(Dish, isouter=True)
         .group_by(Submenu.id)
@@ -21,29 +26,23 @@ async def get_submenu(
         raise NotFoundException(
             error_type="NO SUBMENU", error_message="submenu not found"
         )
-    submenu = result[0]
-    count_submenu = result[1]
-    submenu.dishes_count = count_submenu
-    return submenu
+    return result
 
 
 async def get_submenus(session: AsyncSession, target_menu_id: str) -> list:
     await get_menu(session=session, target_menu_id=target_menu_id)
     q = await session.execute(
-        select(Submenu, func.count(Dish.id).label("dishes_count"))
+        select(
+            Submenu.id,
+            Submenu.description,
+            Submenu.title,
+            func.count(Dish.id).label("dishes_count"),
+        )
         .join(Dish, isouter=True)
         .where(Submenu.menu.has(Menu.id == target_menu_id))
         .group_by(Submenu.id)
     )
-
-    results = q.all()
-    submenus = []
-    for result in results:
-        submenu = result[0]
-        count_dishes = result[1]
-        submenu.dishes_count = count_dishes
-        submenus.append(submenu)
-
+    submenus = q.all()
     return submenus
 
 
