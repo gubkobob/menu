@@ -16,7 +16,6 @@ from ..project.submenus.services import post_submenu
 
 @pytest.fixture(scope="function")
 async def prepare_database():
-    print(settings.url_test)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
