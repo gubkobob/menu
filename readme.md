@@ -10,6 +10,7 @@
 #### - PostgreSQL
 #### - Docker
 #### - Alembic
+#### - Pytest, pytest-asyncio
 ## 3. Техническое задание:
 Написать проект на FastAPI с использованием PostgreSQL в качестве БД. В проекте следует реализовать REST API по работе с меню ресторана, все CRUD операции. Даны 3 сущности: Меню, Подменю, Блюдо.
 
@@ -29,28 +30,18 @@
 
 
 ## 4. Установка и запуск
+#### Только для Unix систем!!!
    
 ### Клонируйте репозитторий и перейдите в корень проекта:
 - git clone https://github.com/gubkobob/menu.git
 - cd menu
-### Создайте .env файл с переменными:
-- DB_HOST=db
-- DB_PORT=5432
-- POSTGRES_DB=postgres
-- POSTGRES_USER=admin
-- POSTGRES_PASSWORD=admin
-
-- DB_HOST_TEST=db_test
-- DB_PORT_TEST=6000
-- POSTGRES_DB_TEST=postgres_test
-- POSTGRES_USER_TEST=admin
-- POSTGRES_PASSWORD_TEST=admin
-
-### Выполните команду для запуска проекта:
-#### Только для Unix систем!!!
+### Для запуска в продакшн:
+- измените имя файла .env.example.prod на .env
+- Выполните команду для запуска проекта:
 - docker compose up --build
-### Выполните команду для запуска тестов в отдельном когнтейнере:
-#### Только для Unix систем!!!
+### Для запуска тестов в отдельном когнтейнере:
+- измените имя файла .env.example.test на .env
+- Выполните команду для запуска контейнера с тестами:
 - docker compose -f docker-compose-test.yaml up --build
 ### Для ручного тестирования эндпоинтов проекта удобно пользоваться следующим URL:
 - http://127.0.0.1:8000/docs

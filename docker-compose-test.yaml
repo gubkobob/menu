@@ -21,12 +21,12 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB_TEST}
-      POSTGRES_USER: ${POSTGRES_USER_TEST}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_TEST}
-    command: -p ${DB_PORT_TEST}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command: -p ${DB_PORT}
     expose:
-      - ${DB_PORT_TEST}
+      - ${DB_PORT}
     networks:
       - custom
     healthcheck:
