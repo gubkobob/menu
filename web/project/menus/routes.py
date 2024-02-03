@@ -4,8 +4,7 @@ routes.py
 Модуль реализует эндпоинты FastApi для взамодействия с меню верхнего уровня.
 
 """
-
-from typing import List, Union
+from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,15 +13,16 @@ from ..database import get_session
 from ..exeptions import NotFoundException
 from ..menus.schemas import MenuInSchema, MenuOutSchema
 from ..menus.services import change_menu, delete_menu, get_menu, get_menus, post_menu
+from ..models import Menu
 from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 
-router = APIRouter(prefix="/menus", tags=["Menus"])
+router = APIRouter(prefix='/menus', tags=['Menus'])
 
 
 @router.get(
-    "/{target_menu_id}",
-    summary="Получение меню по id",
-    response_description="Сообщение о результате",
+    '/{target_menu_id}',
+    summary='Получение меню по id',
+    response_description='Сообщение о результате',
     response_model=Union[MenuOutSchema, NotFoundSchema],
     status_code=200,
 )
@@ -30,7 +30,7 @@ async def get_menu_handler(
     response: Response,
     target_menu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> Menu | dict:
     """
     Эндпоинт возвращает меню по идентификатору или сообщение об ошибке
     \f
@@ -44,7 +44,6 @@ async def get_menu_handler(
     :return: Union[MenuOutSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с меню или ошибкой
     """
-
     try:
         result = await get_menu(session=session, target_menu_id=target_menu_id)
     except NotFoundException as e:
@@ -54,16 +53,16 @@ async def get_menu_handler(
 
 
 @router.get(
-    "/",
-    summary="Получение всех меню",
-    response_description="список меню",
-    response_model=List[MenuOutSchema],
+    '/',
+    summary='Получение всех меню',
+    response_description='список меню',
+    response_model=list[MenuOutSchema],
     status_code=200,
 )
 async def get_menus_handler(
     response: Response,
     session: AsyncSession = Depends(get_session),
-) -> list:
+) -> Sequence[Menu]:
     """
     Эндпоинт возвращает все меню
     \f
@@ -81,9 +80,9 @@ async def get_menus_handler(
 
 
 @router.post(
-    "/",
-    summary="Публикация меню",
-    response_description="Сообщение о результате",
+    '/',
+    summary='Публикация меню',
+    response_description='Сообщение о результате',
     response_model=Union[MenuOutSchema, dict],
     status_code=201,
 )
@@ -91,7 +90,7 @@ async def post_menus_handler(
     response: Response,
     menu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict | Exception:
+) -> Menu | Exception:
     """
     Эндпоинт публикации меню
     \f
@@ -115,9 +114,9 @@ async def post_menus_handler(
 
 
 @router.patch(
-    "/{target_menu_id}",
-    summary="Изменение меню",
-    response_description="Сообщение о результате",
+    '/{target_menu_id}',
+    summary='Изменение меню',
+    response_description='Сообщение о результате',
     response_model=Union[MenuOutSchema, NotFoundSchema],
     status_code=200,
 )
@@ -126,7 +125,7 @@ async def patch_menu_handler(
     target_menu_id: str,
     menu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> Menu | dict:
     """
     Эндпоинт изменения меню
     \f
@@ -158,9 +157,9 @@ async def patch_menu_handler(
 
 
 @router.delete(
-    "/{target_menu_id}",
-    summary="Удаление меню",
-    response_description="Сообщение о результате",
+    '/{target_menu_id}',
+    summary='Удаление меню',
+    response_description='Сообщение о результате',
     response_model=Union[CorrectDeleteSchema, NotFoundSchema],
     status_code=200,
 )
@@ -184,7 +183,7 @@ async def delete_menu_handler(
     """
     try:
         await delete_menu(session=session, target_menu_id=target_menu_id)
-        return {"status": True, "message": "The menu has been deleted"}
+        return {'status': True, 'message': 'The menu has been deleted'}
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()

@@ -5,27 +5,28 @@ routes.py
 
 """
 
-from typing import List, Union
+from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_session
 from ..exeptions import NotFoundException
+from ..models import Dish
 from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from .schemas import DishInSchema, DishOutSchema
 from .services import change_dish, delete_dish, get_dish, get_dishes, post_dish
 
 router = APIRouter(
-    prefix="/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes",
-    tags=["Dishes"],
+    prefix='/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes',
+    tags=['Dishes'],
 )
 
 
 @router.get(
-    "/{target_dish_id}",
-    summary="Получение блюда по id",
-    response_description="Сообщение о результате",
+    '/{target_dish_id}',
+    summary='Получение блюда по id',
+    response_description='Сообщение о результате',
     response_model=Union[DishOutSchema, NotFoundSchema],
     status_code=200,
 )
@@ -35,7 +36,7 @@ async def get_dish_handler(
     target_submenu_id: str,
     target_dish_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> Dish | dict:
     """
     Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
     \f
@@ -68,10 +69,10 @@ async def get_dish_handler(
 
 
 @router.get(
-    "/",
-    summary="Получение всех блюд",
-    response_description="список блюд",
-    response_model=List[DishOutSchema],
+    '/',
+    summary='Получение всех блюд',
+    response_description='список блюд',
+    response_model=list[DishOutSchema],
     status_code=200,
 )
 async def get_dishes_handler(
@@ -79,7 +80,7 @@ async def get_dishes_handler(
     target_menu_id: str,
     target_submenu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> list:
+) -> Sequence[Dish]:
     """
     Эндпоинт возвращает все блюда
     \f
@@ -108,9 +109,9 @@ async def get_dishes_handler(
 
 
 @router.post(
-    "/",
-    summary="Публикация блюда",
-    response_description="Сообщение о результате",
+    '/',
+    summary='Публикация блюда',
+    response_description='Сообщение о результате',
     response_model=Union[DishOutSchema, dict],
     status_code=201,
 )
@@ -120,7 +121,7 @@ async def post_dishes_handler(
     target_submenu_id: str,
     dish: DishInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict | Exception:
+) -> Dish | Exception:
     """
     Эндпоинт публикации подменю
     \f
@@ -154,9 +155,9 @@ async def post_dishes_handler(
 
 
 @router.patch(
-    "/{target_dish_id}",
-    summary="Изменение блюда",
-    response_description="Сообщение о результате",
+    '/{target_dish_id}',
+    summary='Изменение блюда',
+    response_description='Сообщение о результате',
     response_model=Union[DishOutSchema, NotFoundSchema],
     status_code=200,
 )
@@ -167,7 +168,7 @@ async def patch_dish_handler(
     target_dish_id: str,
     dish: DishInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> Dish | dict:
     """
     Эндпоинт изменения меню
     \f
@@ -206,9 +207,9 @@ async def patch_dish_handler(
 
 
 @router.delete(
-    "/{target_dish_id}",
-    summary="Удаление блюда",
-    response_description="Сообщение о результате",
+    '/{target_dish_id}',
+    summary='Удаление блюда',
+    response_description='Сообщение о результате',
     response_model=Union[CorrectDeleteSchema, NotFoundSchema],
     status_code=200,
 )
@@ -243,7 +244,7 @@ async def delete_dish_handler(
             target_submenu_id=target_submenu_id,
             target_dish_id=target_dish_id,
         )
-        return {"status": True, "message": "The dish has been deleted"}
+        return {'status': True, 'message': 'The dish has been deleted'}
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()

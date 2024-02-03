@@ -5,7 +5,7 @@ routes.py
 
 """
 
-from typing import List, Union
+from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..database import get_session
 from ..exeptions import NotFoundException
 from ..menus.schemas import MenuInSchema
+from ..models import Submenu
 from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from .schemas import SubMenuOutSchema
 from .services import (
@@ -23,22 +24,22 @@ from .services import (
     post_submenu,
 )
 
-router = APIRouter(prefix="/menus/{target_menu_id}/submenus", tags=["SubMenus"])
+router = APIRouter(prefix='/menus/{target_menu_id}/submenus', tags=['SubMenus'])
 
 
 @router.get(
-    "/{target_submenu_id}",
-    summary="Получение подменю по id",
-    response_description="Сообщение о результате",
+    '/{target_submenu_id}',
+    summary='Получение подменю по id',
+    response_description='Сообщение о результате',
     response_model=Union[SubMenuOutSchema, NotFoundSchema],
     status_code=200,
 )
-async def get_menu_handler(
+async def get_submenu_handler(
     response: Response,
     target_menu_id: str,
     target_submenu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> Submenu | dict:
     """
     Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
     \f
@@ -68,17 +69,17 @@ async def get_menu_handler(
 
 
 @router.get(
-    "/",
-    summary="Получение всех подменю",
-    response_description="список подменю",
-    response_model=Union[List[SubMenuOutSchema], NotFoundSchema],
+    '/',
+    summary='Получение всех подменю',
+    response_description='список подменю',
+    response_model=Union[list[SubMenuOutSchema], NotFoundSchema],
     status_code=200,
 )
 async def get_submenus_handler(
     response: Response,
     target_menu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> list:
+) -> Sequence[Submenu] | dict:
     """
     Эндпоинт возвращает все подменю
     \f
@@ -101,18 +102,18 @@ async def get_submenus_handler(
 
 
 @router.post(
-    "/",
-    summary="Публикация подменю",
-    response_description="Сообщение о результате",
+    '/',
+    summary='Публикация подменю',
+    response_description='Сообщение о результате',
     response_model=Union[SubMenuOutSchema, dict],
     status_code=201,
 )
-async def post_menus_handler(
+async def post_submenus_handler(
     response: Response,
     target_menu_id: str,
     submenu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict | Exception:
+) -> Submenu | Exception:
     """
     Эндпоинт публикации подменю
     \f
@@ -141,9 +142,9 @@ async def post_menus_handler(
 
 
 @router.patch(
-    "/{target_submenu_id}",
-    summary="Изменение подменю",
-    response_description="Сообщение о результате",
+    '/{target_submenu_id}',
+    summary='Изменение подменю',
+    response_description='Сообщение о результате',
     response_model=Union[SubMenuOutSchema, NotFoundSchema],
     status_code=200,
 )
@@ -153,7 +154,7 @@ async def patch_submenu_handler(
     target_submenu_id: str,
     submenu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> Submenu | dict:
     """
     Эндпоинт изменения меню
     \f
@@ -188,9 +189,9 @@ async def patch_submenu_handler(
 
 
 @router.delete(
-    "/{target_submenu_id}",
-    summary="Удаление подменю",
-    response_description="Сообщение о результате",
+    '/{target_submenu_id}',
+    summary='Удаление подменю',
+    response_description='Сообщение о результате',
     response_model=Union[CorrectDeleteSchema, NotFoundSchema],
     status_code=200,
 )
@@ -221,7 +222,7 @@ async def delete_submenu_handler(
             target_menu_id=target_menu_id,
             target_submenu_id=target_submenu_id,
         )
-        return {"status": True, "message": "The submenu has been deleted"}
+        return {'status': True, 'message': 'The submenu has been deleted'}
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()

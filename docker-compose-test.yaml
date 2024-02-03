@@ -12,7 +12,10 @@ services:
     networks:
       - custom
     depends_on:
-      - db_test
+      db_test:
+        condition: service_started
+      redis:
+        condition: service_started
 
 
   db_test:
@@ -36,7 +39,16 @@ services:
       retries: 10
       start_period: 70s
 
-
+  redis:
+    container_name: "redis"
+    image: redis:7-alpine
+    env_file:
+      - .env
+    command: --port ${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    networks:
+      - custom
 
 networks:
   custom:

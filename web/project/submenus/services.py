@@ -1,54 +1,73 @@
+from typing import Sequence
+
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..exeptions import NotFoundException
 from ..menus.services import get_menu
 from ..models import Dish, Menu, Submenu
+from ..services_overal import (
+    delete_data_from_cache,
+    get_data_from_cache,
+    set_data_to_cache,
+)
 
 
 async def get_submenu(
     session: AsyncSession, target_menu_id: str, target_submenu_id: str
-) -> dict:
+) -> Submenu:
     await get_menu(session=session, target_menu_id=target_menu_id)
-    q = await session.execute(
-        select(
-            Submenu.id,
-            Submenu.description,
-            Submenu.title,
-            func.count(Dish.id).label("dishes_count"),
+
+    data = get_data_from_cache(key=target_submenu_id)
+    if data is not None:
+        result = data
+    else:
+        q = await session.execute(
+            select(
+                Submenu.id,
+                Submenu.description,
+                Submenu.title,
+                func.count(Dish.id).label('dishes_count'),
+            )
+            .where(Submenu.id == target_submenu_id, Submenu.menu_id == target_menu_id)
+            .join(Dish, isouter=True)
+            .group_by(Submenu.id)
         )
-        .where(Submenu.id == target_submenu_id, Submenu.menu_id == target_menu_id)
-        .join(Dish, isouter=True)
-        .group_by(Submenu.id)
-    )
-    result = q.one_or_none()
-    if not result:
-        raise NotFoundException(
-            error_type="NO SUBMENU", error_message="submenu not found"
-        )
+        result = q.one_or_none()
+        if not result:
+            raise NotFoundException(
+                error_type='NO SUBMENU', error_message='submenu not found'
+            )
+        set_data_to_cache(key=target_submenu_id, value=result)
     return result
 
 
-async def get_submenus(session: AsyncSession, target_menu_id: str) -> list:
+async def get_submenus(session: AsyncSession, target_menu_id: str) -> Sequence[Submenu]:
     await get_menu(session=session, target_menu_id=target_menu_id)
-    q = await session.execute(
-        select(
-            Submenu.id,
-            Submenu.description,
-            Submenu.title,
-            func.count(Dish.id).label("dishes_count"),
+    key_submenus = '/'.join([target_menu_id, 'submenus'])
+    data = get_data_from_cache(key=key_submenus)
+    if data is not None:
+        submenus = data
+    else:
+        q = await session.execute(
+            select(
+                Submenu.id,
+                Submenu.description,
+                Submenu.title,
+                func.count(Dish.id).label('dishes_count'),
+            )
+            .join(Dish, isouter=True)
+            .where(Submenu.menu.has(Menu.id == target_menu_id))
+            .group_by(Submenu.id)
         )
-        .join(Dish, isouter=True)
-        .where(Submenu.menu.has(Menu.id == target_menu_id))
-        .group_by(Submenu.id)
-    )
-    submenus = q.all()
+        submenus = q.all()
+        set_data_to_cache(key=key_submenus, value=submenus)
     return submenus
 
 
 async def post_submenu(
     session: AsyncSession, target_menu_id: str, title: str, description: str
-) -> dict:
+) -> Submenu:
     menu = await get_menu(session=session, target_menu_id=target_menu_id)
 
     insert_submenu_query = await session.execute(
@@ -58,6 +77,9 @@ async def post_submenu(
     await session.commit()
     q = await session.execute(select(Submenu).where(Submenu.id == new_submenu_id))
     inserted_submenu = q.scalars().one_or_none()
+
+    key_submenus = '/'.join([target_menu_id, 'submenus'])
+    delete_data_from_cache('all_menus', target_menu_id, key_submenus)
 
     return inserted_submenu
 
@@ -76,6 +98,8 @@ async def delete_submenu(
         )
     )
     await session.commit()
+    key_submenus = '/'.join([target_menu_id, 'submenus'])
+    delete_data_from_cache('all_menus', target_menu_id, target_submenu_id, key_submenus)
 
 
 async def change_submenu(
@@ -84,7 +108,7 @@ async def change_submenu(
     target_submenu_id: str,
     title: str,
     description: str,
-) -> dict:
+) -> Submenu:
     await get_submenu(
         session=session,
         target_submenu_id=target_submenu_id,
@@ -100,4 +124,7 @@ async def change_submenu(
 
     q = await session.execute(select(Submenu).where(Submenu.id == target_submenu_id))
     changed_submenu = q.scalars().one_or_none()
+
+    key_submenus = '/'.join([target_menu_id, 'submenus'])
+    delete_data_from_cache('all_menus', target_menu_id, target_submenu_id, key_submenus)
     return changed_submenu
