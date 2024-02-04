@@ -24,7 +24,8 @@ async def get_dish(
         target_menu_id=target_menu_id,
         target_submenu_id=target_submenu_id,
     )
-    data = get_data_from_cache(key=target_dish_id)
+    key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
+    data = get_data_from_cache(key=key_dish)
     if data is not None:
         dish = data
     else:
@@ -40,7 +41,7 @@ async def get_dish(
             raise NotFoundException(
                 error_type='NO DISH', error_message='dish not found'
             )
-        set_data_to_cache(key=target_dish_id, value=dish)
+        set_data_to_cache(key=key_dish, value=dish)
     return dish
 
 
@@ -90,10 +91,10 @@ async def post_dish(
     inserted_dish = q.scalars().one_or_none()
 
     key_submenus = '/'.join([target_menu_id, 'submenus'])
+    key_submenu = '/'.join([target_menu_id, target_submenu_id])
     key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
-    delete_data_from_cache(
-        'all_menus', target_menu_id, key_submenus, target_submenu_id, key_dishes
-    )
+
+    delete_data_from_cache('all_menus', target_menu_id, key_submenu, key_submenus, key_dishes)
     return inserted_dish
 
 
@@ -113,15 +114,11 @@ async def delete_dish(
     await session.commit()
 
     key_submenus = '/'.join([target_menu_id, 'submenus'])
+    key_submenu = '/'.join([target_menu_id, target_submenu_id])
     key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
-    delete_data_from_cache(
-        'all_menus',
-        target_menu_id,
-        key_submenus,
-        target_submenu_id,
-        key_dishes,
-        target_dish_id,
-    )
+    key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
+
+    delete_data_from_cache('all_menus', target_menu_id, key_submenu, key_submenus, key_dishes, key_dish)
 
 
 async def change_dish(
@@ -150,15 +147,11 @@ async def change_dish(
     q = await session.execute(select(Dish).where(Dish.id == target_dish_id))
     changed_dish = q.scalars().one_or_none()
 
-    key_submenus = '/'.join([target_menu_id, 'submenus'])
+    key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
     key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
     delete_data_from_cache(
-        'all_menus',
-        target_menu_id,
-        key_submenus,
-        target_submenu_id,
         key_dishes,
-        target_dish_id,
+        key_dish,
     )
 
     return changed_dish

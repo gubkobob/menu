@@ -27,3 +27,13 @@ def set_data_to_cache(key: str, value: Any) -> bool | None:
 def delete_data_from_cache(*keys: str):
     """удаляет данные из кеша"""
     redis_client.delete(*keys)
+
+
+def clear_namespace_from_cache(namespace: str) -> int:
+    """удаляет данные из кеша с ключами, начинающимися на namespace"""
+    count = 0
+    ns_keys = namespace + '*'
+    for key in redis_client.scan_iter(ns_keys):
+        redis_client.delete(key)
+        count += 1
+    return count

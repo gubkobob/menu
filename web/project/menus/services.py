@@ -6,6 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..exeptions import NotFoundException
 from ..models import Dish, Menu, Submenu
 from ..services_overal import (
+    clear_namespace_from_cache,
     delete_data_from_cache,
     get_data_from_cache,
     set_data_to_cache,
@@ -84,7 +85,8 @@ async def delete_menu(session: AsyncSession, target_menu_id: str):
     await get_menu(session=session, target_menu_id=target_menu_id)
     await session.execute(delete(Menu).where(Menu.id == target_menu_id))
     await session.commit()
-    delete_data_from_cache(target_menu_id, 'all_menus')
+    delete_data_from_cache('all_menus')
+    clear_namespace_from_cache(target_menu_id)
 
 
 async def change_menu(
