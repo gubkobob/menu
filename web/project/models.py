@@ -11,40 +11,40 @@ def generate_uuid():
 
 
 class Menu(Base):
-    __tablename__: str = "menus"
+    __tablename__: str = 'menus'
 
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
 
     submenus = relationship(
-        "Submenu",
-        back_populates="menu",
-        cascade="all, delete",
+        'Submenu',
+        back_populates='menu',
+        cascade='all, delete',
         passive_deletes=True,
     )
 
 
 class Submenu(Base):
-    __tablename__: str = "submenus"
+    __tablename__: str = 'submenus'
 
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
     description = Column(String, index=True)
-    menu_id = Column(ForeignKey("menus.id", ondelete="CASCADE"), index=True)
+    menu_id = Column(ForeignKey('menus.id', ondelete='CASCADE'), index=True)
 
-    menu = relationship("Menu", back_populates="submenus")
+    menu = relationship('Menu', back_populates='submenus')
 
     dishes = relationship(
-        "Dish",
-        back_populates="submenu",
-        cascade="all, delete",
+        'Dish',
+        back_populates='submenu',
+        cascade='all, delete',
         passive_deletes=True,
     )
 
 
 class Dish(Base):
-    __tablename__: str = "dishes"
+    __tablename__: str = 'dishes'
 
     id = Column(String, primary_key=True, default=generate_uuid)
     title = Column(String, index=True)
@@ -52,6 +52,6 @@ class Dish(Base):
     price = Column(
         DECIMAL(scale=2, precision=32, asdecimal=True, decimal_return_scale=2)
     )
-    submenu_id = Column(ForeignKey("submenus.id", ondelete="CASCADE"), index=True)
+    submenu_id = Column(ForeignKey('submenus.id', ondelete='CASCADE'), index=True)
 
-    submenu = relationship("Submenu", back_populates="dishes")
+    submenu = relationship('Submenu', back_populates='dishes')

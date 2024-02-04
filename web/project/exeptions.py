@@ -5,10 +5,10 @@ class NotFoundException(Exception):
 
     def __repr__(self):
         return {
-            "detail": self.error_message,
+            'detail': self.error_message,
         }
 
     def answer(self):
         return {
-            "detail": self.error_message,
+            'detail': self.error_message,
         }

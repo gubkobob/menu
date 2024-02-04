@@ -10,10 +10,10 @@ api_router.include_router(routes_menus.router)
 api_router.include_router(routes_submenus.router)
 api_router.include_router(routes_dishes.router)
 
-app = FastAPI()
-app.include_router(api_router, prefix="/api/v1")
+app = FastAPI(title='Menu_app')
+app.include_router(api_router, prefix='/api/v1')
 
 
-@app.on_event("shutdown")
+@app.on_event('shutdown')
 async def shutdown():
     await engine.dispose()

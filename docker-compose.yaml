@@ -18,6 +18,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
 
   db:
     container_name: "db"
@@ -37,6 +39,19 @@ services:
       timeout: 30s
       retries: 10
       start_period: 70s
+
+
+  redis:
+    container_name: "redis"
+    image: redis:7-alpine
+    env_file:
+      - .env
+    command: --port ${REDIS_PORT}
+    expose:
+      - ${REDIS_PORT}
+    networks:
+      - custom
+
 
 volumes:
   db_dev:

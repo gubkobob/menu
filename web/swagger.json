@@ -1,0 +1,1096 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Menu_app",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/menus/{target_menu_id}": {
+      "get": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Получение меню по id",
+        "description": "Эндпоинт возвращает меню по идентификатору или сообщение об ошибке",
+        "operationId": "get_menu_handler_api_v1_menus__target_menu_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Menu Handler Api V1 Menus  Target Menu Id  Get",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MenuOutSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Удаление меню",
+        "description": "Эндпоинт удаления меню по его id",
+        "operationId": "delete_menu_handler_api_v1_menus__target_menu_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Delete Menu Handler Api V1 Menus  Target Menu Id  Delete",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/CorrectDeleteSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Изменение меню",
+        "description": "Эндпоинт изменения меню",
+        "operationId": "patch_menu_handler_api_v1_menus__target_menu_id__patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuInSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Patch Menu Handler Api V1 Menus  Target Menu Id  Patch",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MenuOutSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/": {
+      "get": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Получение всех меню",
+        "description": "Эндпоинт возвращает все меню",
+        "operationId": "get_menus_handler_api_v1_menus__get",
+        "responses": {
+          "200": {
+            "description": "список меню",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Menus Handler Api V1 Menus  Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MenuOutSchema"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Menus"
+        ],
+        "summary": "Публикация меню",
+        "description": "Эндпоинт публикации меню",
+        "operationId": "post_menus_handler_api_v1_menus__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuInSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Post Menus Handler Api V1 Menus  Post",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MenuOutSchema"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{target_menu_id}/submenus/{target_submenu_id}": {
+      "get": {
+        "tags": [
+          "SubMenus"
+        ],
+        "summary": "Получение подменю по id",
+        "description": "Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке",
+        "operationId": "get_submenu_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Submenu Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Get",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SubMenuOutSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SubMenus"
+        ],
+        "summary": "Удаление подменю",
+        "description": "Эндпоинт удаления подменю по его id",
+        "operationId": "delete_submenu_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Delete Submenu Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Delete",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/CorrectDeleteSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "SubMenus"
+        ],
+        "summary": "Изменение подменю",
+        "description": "Эндпоинт изменения меню",
+        "operationId": "patch_submenu_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuInSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Patch Submenu Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Patch",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SubMenuOutSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{target_menu_id}/submenus/": {
+      "get": {
+        "tags": [
+          "SubMenus"
+        ],
+        "summary": "Получение всех подменю",
+        "description": "Эндпоинт возвращает все подменю",
+        "operationId": "get_submenus_handler_api_v1_menus__target_menu_id__submenus__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "список подменю",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Submenus Handler Api V1 Menus  Target Menu Id  Submenus  Get",
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SubMenuOutSchema"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SubMenus"
+        ],
+        "summary": "Публикация подменю",
+        "description": "Эндпоинт публикации подменю",
+        "operationId": "post_submenus_handler_api_v1_menus__target_menu_id__submenus__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuInSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Post Submenus Handler Api V1 Menus  Target Menu Id  Submenus  Post",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SubMenuOutSchema"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes/{target_dish_id}": {
+      "get": {
+        "tags": [
+          "Dishes"
+        ],
+        "summary": "Получение блюда по id",
+        "description": "Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке",
+        "operationId": "get_dish_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__dishes__target_dish_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Dish Id",
+              "type": "string"
+            },
+            "name": "target_dish_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Dish Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Dishes  Target Dish Id  Get",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/DishOutSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Dishes"
+        ],
+        "summary": "Удаление блюда",
+        "description": "Эндпоинт удаления блюда по его id",
+        "operationId": "delete_dish_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__dishes__target_dish_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Dish Id",
+              "type": "string"
+            },
+            "name": "target_dish_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Delete Dish Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Dishes  Target Dish Id  Delete",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/CorrectDeleteSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Dishes"
+        ],
+        "summary": "Изменение блюда",
+        "description": "Эндпоинт изменения меню",
+        "operationId": "patch_dish_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__dishes__target_dish_id__patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Dish Id",
+              "type": "string"
+            },
+            "name": "target_dish_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DishInSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Patch Dish Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Dishes  Target Dish Id  Patch",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/DishOutSchema"
+                    },
+                    {
+                      "$ref": "#/components/schemas/NotFoundSchema"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/menus/{target_menu_id}/submenus/{target_submenu_id}/dishes/": {
+      "get": {
+        "tags": [
+          "Dishes"
+        ],
+        "summary": "Получение всех блюд",
+        "description": "Эндпоинт возвращает все блюда",
+        "operationId": "get_dishes_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__dishes__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "список блюд",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Get Dishes Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Dishes  Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DishOutSchema"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Dishes"
+        ],
+        "summary": "Публикация блюда",
+        "description": "Эндпоинт публикации подменю",
+        "operationId": "post_dishes_handler_api_v1_menus__target_menu_id__submenus__target_submenu_id__dishes__post",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Menu Id",
+              "type": "string"
+            },
+            "name": "target_menu_id",
+            "in": "path"
+          },
+          {
+            "required": true,
+            "schema": {
+              "title": "Target Submenu Id",
+              "type": "string"
+            },
+            "name": "target_submenu_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DishInSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Сообщение о результате",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Post Dishes Handler Api V1 Menus  Target Menu Id  Submenus  Target Submenu Id  Dishes  Post",
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/DishOutSchema"
+                    },
+                    {
+                      "type": "object"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CorrectDeleteSchema": {
+        "title": "CorrectDeleteSchema",
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "boolean",
+            "default": true
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "description": "Pydantic-схема ответа об удалении\n\nParameters\n----------\nresult: bool\n    Флаг успешного выполнения операции\nmessage: str\n    сообщение"
+      },
+      "DishInSchema": {
+        "title": "DishInSchema",
+        "required": [
+          "title",
+          "description",
+          "price"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "price": {
+            "title": "Price",
+            "type": "string"
+          }
+        },
+        "description": "Pydantic-схема меню для ввода данных блюда\n\nParameters\n----------\nprice: str\n    Цена блюда"
+      },
+      "DishOutSchema": {
+        "title": "DishOutSchema",
+        "required": [
+          "title",
+          "description",
+          "price",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "price": {
+            "title": "Price",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          }
+        },
+        "description": "Pydantic-схема для вывода данных о блюде\n\nParameters\n----------\nid: str\n    Идентификатор блюда в СУБД"
+      },
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "MenuInSchema": {
+        "title": "MenuInSchema",
+        "required": [
+          "title",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        },
+        "description": "Pydantic-схема меню для ввода данных"
+      },
+      "MenuOutSchema": {
+        "title": "MenuOutSchema",
+        "required": [
+          "title",
+          "description",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "submenus_count": {
+            "title": "Submenus Count",
+            "type": "integer",
+            "default": 0
+          },
+          "dishes_count": {
+            "title": "Dishes Count",
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "description": "Pydantic-схема для вывода данных о меню\n\nParameters\n----------\nid: str\n    Идентификатор меню в СУБД\nsubmenus_count: int\n    количество подменю в меню\ndishes_count: int\n    количество блюд во всех подменю, входящих в меню"
+      },
+      "NotFoundSchema": {
+        "title": "NotFoundSchema",
+        "required": [
+          "detail"
+        ],
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "description": "Pydantic-схема результата запроса не найдено\n\nParameters\n----------\n\ndetail: str\n    детали ответа"
+      },
+      "SubMenuOutSchema": {
+        "title": "SubMenuOutSchema",
+        "required": [
+          "title",
+          "description",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "dishes_count": {
+            "title": "Dishes Count",
+            "type": "integer",
+            "default": 0
+          }
+        },
+        "description": "Pydantic-схема для вывода данных о подменю\n\nParameters\n----------\nid: str\n    Идентификатор пользователя в СУБД\ndishes_count: int\n    количество блюд в подменю"
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
