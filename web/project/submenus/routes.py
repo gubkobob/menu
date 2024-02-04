@@ -39,7 +39,7 @@ async def get_submenu_handler(
     target_menu_id: str,
     target_submenu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> Submenu | dict:
+) -> Submenu | dict[str, str]:
     """
     Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
     \f
@@ -79,7 +79,7 @@ async def get_submenus_handler(
     response: Response,
     target_menu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> Sequence[Submenu] | dict:
+) -> Sequence[Submenu] | dict[str, str]:
     """
     Эндпоинт возвращает все подменю
     \f
@@ -154,7 +154,7 @@ async def patch_submenu_handler(
     target_submenu_id: str,
     submenu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> Submenu | dict:
+) -> Submenu | dict[str, str]:
     """
     Эндпоинт изменения меню
     \f
@@ -200,7 +200,7 @@ async def delete_submenu_handler(
     target_menu_id: str,
     target_submenu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> dict[str, bool | str]:
     """
     Эндпоинт удаления подменю по его id
     \f

@@ -36,7 +36,7 @@ async def get_dish_handler(
     target_submenu_id: str,
     target_dish_id: str,
     session: AsyncSession = Depends(get_session),
-) -> Dish | dict:
+) -> Dish | dict[str, str]:
     """
     Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
     \f
@@ -168,7 +168,7 @@ async def patch_dish_handler(
     target_dish_id: str,
     dish: DishInSchema,
     session: AsyncSession = Depends(get_session),
-) -> Dish | dict:
+) -> Dish | dict[str, str]:
     """
     Эндпоинт изменения меню
     \f
@@ -219,7 +219,7 @@ async def delete_dish_handler(
     target_submenu_id: str,
     target_dish_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> dict[str, bool | str]:
     """
     Эндпоинт удаления блюда по его id
     \f

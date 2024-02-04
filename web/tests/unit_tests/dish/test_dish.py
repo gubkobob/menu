@@ -2,16 +2,15 @@ import os
 
 from httpx import AsyncClient
 from project.database import async_session
-from project.main import app
 from project.models import Dish
 from sqlalchemy import select
 
 
 class TestDishes:
-    async def test_get_dishes_handler_success(self, create_dish, ac: AsyncClient):
+    async def test_get_dishes_handler_success(self, create_dish, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_dishes_handler',
+            reverse(
+                'get_dishes',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             )
@@ -19,10 +18,10 @@ class TestDishes:
         assert response.status_code == 200
         assert response.json() != []
 
-    async def test_get_dishes_handler_empty_list(self, ac: AsyncClient):
+    async def test_get_dishes_handler_empty_list(self, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_dishes_handler',
+            reverse(
+                'get_dishes',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             )
@@ -30,10 +29,10 @@ class TestDishes:
         assert response.status_code == 200
         assert response.json() == []
 
-    async def test_post_dish_handler_success(self, ac: AsyncClient):
+    async def test_post_dish_handler_success(self, ac: AsyncClient, reverse):
         response = await ac.post(
-            app.url_path_for(
-                'post_dishes_handler',
+            reverse(
+                'post_dishes',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             ),
@@ -59,10 +58,10 @@ class TestDishes:
         assert response.json()['id'] == dish.id
         assert response.json()['price'] == str(dish.price)
 
-    async def test_get_dish_handler_success(self, create_dish, ac: AsyncClient):
+    async def test_get_dish_handler_success(self, create_dish, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_dish_handler',
+            reverse(
+                'get_dish',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
                 target_dish_id=os.getenv('target_dish_id'),
@@ -74,10 +73,10 @@ class TestDishes:
         assert response.json()['price'] == os.getenv('target_dish_price')
         assert response.json()['id'] == os.getenv('target_dish_id')
 
-    async def test_get_dish_handler_not_found(self, ac: AsyncClient):
+    async def test_get_dish_handler_not_found(self, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_dish_handler',
+            reverse(
+                'get_dish',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
                 target_dish_id=os.getenv('target_dish_id'),
@@ -86,10 +85,10 @@ class TestDishes:
         assert response.status_code == 404
         assert response.json()['detail'] == 'dish not found'
 
-    async def test_patch_dish_handler_success(self, create_dish, ac: AsyncClient):
+    async def test_patch_dish_handler_success(self, create_dish, ac: AsyncClient, reverse):
         response = await ac.patch(
-            app.url_path_for(
-                'patch_dish_handler',
+            reverse(
+                'patch_dish',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
                 target_dish_id=os.getenv('target_dish_id'),
@@ -116,10 +115,10 @@ class TestDishes:
         assert response.json()['id'] == dish.id
         assert response.json()['price'] == str(dish.price)
 
-    async def test_patch_dish_handler_not_found(self, ac: AsyncClient):
+    async def test_patch_dish_handler_not_found(self, ac: AsyncClient, reverse):
         response = await ac.patch(
-            app.url_path_for(
-                'patch_dish_handler',
+            reverse(
+                'patch_dish',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
                 target_dish_id=os.getenv('target_dish_id'),
@@ -133,10 +132,10 @@ class TestDishes:
         assert response.status_code == 404
         assert response.json()['detail'] == 'dish not found'
 
-    async def test_delete_dish_handler_success(self, create_dish, ac: AsyncClient):
+    async def test_delete_dish_handler_success(self, create_dish, ac: AsyncClient, reverse):
         response = await ac.delete(
-            app.url_path_for(
-                'delete_dish_handler',
+            reverse(
+                'delete_dish',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
                 target_dish_id=os.getenv('target_dish_id'),
@@ -146,10 +145,10 @@ class TestDishes:
         assert response.json()['status'] is True
         assert response.json()['message'] == 'The dish has been deleted'
 
-    async def test_delete_dish_handler_not_found(self, ac: AsyncClient):
+    async def test_delete_dish_handler_not_found(self, ac: AsyncClient, reverse):
         response = await ac.delete(
-            app.url_path_for(
-                'delete_dish_handler',
+            reverse(
+                'delete_dish',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
                 target_dish_id=os.getenv('target_dish_id'),

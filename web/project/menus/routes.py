@@ -30,7 +30,7 @@ async def get_menu_handler(
     response: Response,
     target_menu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> Menu | dict:
+) -> Menu | dict[str, str]:
     """
     Эндпоинт возвращает меню по идентификатору или сообщение об ошибке
     \f
@@ -125,7 +125,7 @@ async def patch_menu_handler(
     target_menu_id: str,
     menu: MenuInSchema,
     session: AsyncSession = Depends(get_session),
-) -> Menu | dict:
+) -> Menu | dict[str, str]:
     """
     Эндпоинт изменения меню
     \f
@@ -167,7 +167,7 @@ async def delete_menu_handler(
     response: Response,
     target_menu_id: str,
     session: AsyncSession = Depends(get_session),
-) -> dict:
+) -> dict[str, bool | str]:
     """
     Эндпоинт удаления меню по его id
     \f

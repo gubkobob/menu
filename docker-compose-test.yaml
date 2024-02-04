@@ -33,7 +33,7 @@ services:
     networks:
       - custom
     healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER_TEST} -d ${POSTGRES_DB_TEST}'"]
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
       interval: 5s
       timeout: 30s
       retries: 10
