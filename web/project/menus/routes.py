@@ -53,7 +53,7 @@ async def get_menu_handler(
 
 
 @router.get(
-    '/',
+    '',
     summary='Получение всех меню',
     response_description='список меню',
     response_model=list[MenuOutSchema],
@@ -80,7 +80,7 @@ async def get_menus_handler(
 
 
 @router.post(
-    '/',
+    '',
     summary='Публикация меню',
     response_description='Сообщение о результате',
     response_model=Union[MenuOutSchema, dict],

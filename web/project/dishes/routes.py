@@ -69,7 +69,7 @@ async def get_dish_handler(
 
 
 @router.get(
-    '/',
+    '',
     summary='Получение всех блюд',
     response_description='список блюд',
     response_model=list[DishOutSchema],
@@ -109,7 +109,7 @@ async def get_dishes_handler(
 
 
 @router.post(
-    '/',
+    '',
     summary='Публикация блюда',
     response_description='Сообщение о результате',
     response_model=Union[DishOutSchema, dict],

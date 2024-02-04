@@ -69,7 +69,7 @@ async def get_submenu_handler(
 
 
 @router.get(
-    '/',
+    '',
     summary='Получение всех подменю',
     response_description='список подменю',
     response_model=Union[list[SubMenuOutSchema], NotFoundSchema],
@@ -102,7 +102,7 @@ async def get_submenus_handler(
 
 
 @router.post(
-    '/',
+    '',
     summary='Публикация подменю',
     response_description='Сообщение о результате',
     response_model=Union[SubMenuOutSchema, dict],
