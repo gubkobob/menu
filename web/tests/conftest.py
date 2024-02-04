@@ -15,19 +15,19 @@ from ..project.submenus.services import post_submenu
 def reverse_path(route_name: str, **kwargs) -> str | None:
     routes = {
         'get_menu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}',
-        'get_menus': '/api/v1/menus/',
-        'post_menus': '/api/v1/menus/',
+        'get_menus': '/api/v1/menus',
+        'post_menus': '/api/v1/menus',
         'patch_menu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}',
         'delete_menu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}',
         'get_submenu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}',
-        'get_submenus': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/',
-        'post_submenus': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/',
+        'get_submenus': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus',
+        'post_submenus': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus',
         'patch_submenu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}',
         'delete_submenu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}',
         'get_dish': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/'
                     f'{kwargs.get("target_submenu_id", "")}/dishes/{kwargs.get("target_dish_id", "")}',
-        'get_dishes': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}/dishes/',
-        'post_dishes': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}/dishes/',
+        'get_dishes': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}/dishes',
+        'post_dishes': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}/dishes',
         'patch_dish': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/'
                       f'{kwargs.get("target_submenu_id", "")}/dishes/{kwargs.get("target_dish_id", "")}',
         'delete_dish': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/'
