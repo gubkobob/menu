@@ -11,6 +11,7 @@
 #### - Docker
 #### - Alembic
 #### - Pytest, pytest-asyncio
+#### - Redis
 ## 3. Техническое задание:
 Написать проект на FastAPI с использованием PostgreSQL в качестве БД. В проекте следует реализовать REST API по работе с меню ресторана, все CRUD операции. Даны 3 сущности: Меню, Подменю, Блюдо.
 
@@ -47,3 +48,5 @@
 - http://127.0.0.1:8000/docs
 ### Запрос на получение всех меню с количеством подменю и блюд находится:
 - menu/web/project/menus/services.py -> get_menu
+###  Аналог Django reverse() для FastAPI:
+- menu/web/tests/conftest.py -> reverse

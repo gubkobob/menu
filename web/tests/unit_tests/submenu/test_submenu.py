@@ -2,34 +2,33 @@ import os
 
 from httpx import AsyncClient
 from project.database import async_session
-from project.main import app
 from project.models import Submenu
 from sqlalchemy import select
 
 
 class TestSubmenus:
-    async def test_get_submenus_handler_success(self, create_submenu, ac: AsyncClient):
+    async def test_get_submenus_handler_success(self, create_submenu, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_submenus_handler', target_menu_id=os.getenv('target_menu_id')
+            reverse(
+                'get_submenus', target_menu_id=os.getenv('target_menu_id')
             )
         )
         assert response.status_code == 200
         assert response.json() != []
 
-    async def test_get_submenus_handler_empty_list(self, ac: AsyncClient):
+    async def test_get_submenus_handler_empty_list(self, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_submenus_handler', target_menu_id=os.getenv('target_menu_id')
+            reverse(
+                'get_submenus', target_menu_id=os.getenv('target_menu_id')
             )
         )
         assert response.status_code == 200
         assert response.json() == []
 
-    async def test_post_submenu_handler_success(self, ac: AsyncClient):
+    async def test_post_submenu_handler_success(self, ac: AsyncClient, reverse):
         response = await ac.post(
-            app.url_path_for(
-                'post_submenus_handler', target_menu_id=os.getenv('target_menu_id')
+            reverse(
+                'post_submenus', target_menu_id=os.getenv('target_menu_id')
             ),
             json={'title': 'My submenu 4', 'description': 'My submenu description 4'},
         )
@@ -49,10 +48,10 @@ class TestSubmenus:
         assert response.json()['description'] == submenu.description
         assert response.json()['id'] == submenu.id
 
-    async def test_get_submenu_handler_success(self, create_submenu, ac: AsyncClient):
+    async def test_get_submenu_handler_success(self, create_submenu, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_submenu_handler',
+            reverse(
+                'get_submenu',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             )
@@ -62,10 +61,10 @@ class TestSubmenus:
         assert response.json()['description'] == os.getenv('target_submenu_description')
         assert response.json()['id'] == os.getenv('target_submenu_id')
 
-    async def test_get_submenu_handler_not_found_submenu(self, ac: AsyncClient):
+    async def test_get_submenu_handler_not_found_submenu(self, ac: AsyncClient, reverse):
         response = await ac.get(
-            app.url_path_for(
-                'get_submenu_handler',
+            reverse(
+                'get_submenu',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             )
@@ -73,10 +72,10 @@ class TestSubmenus:
         assert response.status_code == 404
         assert response.json()['detail'] == 'submenu not found'
 
-    async def test_patch_submenu_handler_success(self, create_submenu, ac: AsyncClient):
+    async def test_patch_submenu_handler_success(self, create_submenu, ac: AsyncClient, reverse):
         response = await ac.patch(
-            app.url_path_for(
-                'patch_submenu_handler',
+            reverse(
+                'patch_submenu',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             ),
@@ -99,10 +98,10 @@ class TestSubmenus:
         assert response.json()['description'] == submenu.description
         assert response.json()['id'] == submenu.id
 
-    async def test_patch_submenu_handler_submenu_not_found(self, ac: AsyncClient):
+    async def test_patch_submenu_handler_submenu_not_found(self, ac: AsyncClient, reverse):
         response = await ac.patch(
-            app.url_path_for(
-                'patch_submenu_handler',
+            reverse(
+                'patch_submenu',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             ),
@@ -115,11 +114,10 @@ class TestSubmenus:
         assert response.json()['detail'] == 'submenu not found'
 
     async def test_delete_submenu_handler_success(
-        self, create_submenu, ac: AsyncClient
-    ):
+            self, create_submenu, ac: AsyncClient, reverse):
         response = await ac.delete(
-            app.url_path_for(
-                'delete_submenu_handler',
+            reverse(
+                'delete_submenu',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             )
@@ -128,10 +126,10 @@ class TestSubmenus:
         assert response.json()['status'] is True
         assert response.json()['message'] == 'The submenu has been deleted'
 
-    async def test_delete_submenu_handler_not_found_submenu(self, ac: AsyncClient):
+    async def test_delete_submenu_handler_not_found_submenu(self, ac: AsyncClient, reverse):
         response = await ac.delete(
-            app.url_path_for(
-                'delete_submenu_handler',
+            reverse(
+                'delete_submenu',
                 target_menu_id=os.getenv('target_menu_id'),
                 target_submenu_id=os.getenv('target_submenu_id'),
             )
