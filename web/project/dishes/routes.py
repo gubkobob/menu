@@ -8,12 +8,12 @@ routes.py
 from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
+from project.database import get_session
+from project.exeptions import NotFoundException
+from project.models import Dish
+from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_session
-from ..exeptions import NotFoundException
-from ..models import Dish
-from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from .schemas import DishInSchema, DishOutSchema
 from .services import change_dish, delete_dish, get_dish, get_dishes, post_dish
 

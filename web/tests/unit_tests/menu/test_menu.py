@@ -7,7 +7,9 @@ from sqlalchemy import select
 
 
 class TestMenus:
-    async def test_get_menus_handler_not_empty(self, create_menu, ac: AsyncClient, reverse):
+    async def test_get_menus_handler_not_empty(
+        self, create_menu, ac: AsyncClient, reverse
+    ):
         response = await ac.get(reverse('get_menus'))
         assert response.status_code == 200
         assert response.json() != []
@@ -36,11 +38,11 @@ class TestMenus:
         assert response.json()['description'] == menu.description
         assert response.json()['id'] == menu.id
 
-    async def test_get_menu_handler_success(self, create_menu, ac: AsyncClient, reverse):
+    async def test_get_menu_handler_success(
+        self, create_menu, ac: AsyncClient, reverse
+    ):
         response = await ac.get(
-            reverse(
-                'get_menu', target_menu_id=os.getenv('target_menu_id')
-            )
+            reverse('get_menu', target_menu_id=os.getenv('target_menu_id'))
         )
         assert response.status_code == 200
         assert response.json()['title'] == os.getenv('target_menu_title')
@@ -49,18 +51,16 @@ class TestMenus:
 
     async def test_get_menu_handler_not_found_menu(self, ac: AsyncClient, reverse):
         response = await ac.get(
-            reverse(
-                'get_menu', target_menu_id=os.getenv('target_menu_id')
-            )
+            reverse('get_menu', target_menu_id=os.getenv('target_menu_id'))
         )
         assert response.status_code == 404
         assert response.json()['detail'] == 'menu not found'
 
-    async def test_patch_menu_handler_success(self, create_menu, ac: AsyncClient, reverse):
+    async def test_patch_menu_handler_success(
+        self, create_menu, ac: AsyncClient, reverse
+    ):
         response = await ac.patch(
-            reverse(
-                'patch_menu', target_menu_id=os.getenv('target_menu_id')
-            ),
+            reverse('patch_menu', target_menu_id=os.getenv('target_menu_id')),
             json={
                 'title': 'My updated menu 1',
                 'description': 'My updated menu description 1',
@@ -82,9 +82,7 @@ class TestMenus:
 
     async def test_patch_menu_handler_not_found_menu(self, ac: AsyncClient, reverse):
         response = await ac.patch(
-            reverse(
-                'patch_menu', target_menu_id=os.getenv('target_menu_id')
-            ),
+            reverse('patch_menu', target_menu_id=os.getenv('target_menu_id')),
             json={
                 'title': 'My updated menu 1',
                 'description': 'My updated menu description 1',
@@ -93,11 +91,11 @@ class TestMenus:
         assert response.status_code == 404
         assert response.json()['detail'] == 'menu not found'
 
-    async def test_delete_menu_handler_success(self, create_menu, ac: AsyncClient, reverse):
+    async def test_delete_menu_handler_success(
+        self, create_menu, ac: AsyncClient, reverse
+    ):
         response = await ac.delete(
-            reverse(
-                'delete_menu', target_menu_id=os.getenv('target_menu_id')
-            )
+            reverse('delete_menu', target_menu_id=os.getenv('target_menu_id'))
         )
         assert response.status_code == 200
         assert response.json()['status'] is True
@@ -105,9 +103,7 @@ class TestMenus:
 
     async def test_delete_menu_handler_not_found_menu(self, ac: AsyncClient, reverse):
         response = await ac.delete(
-            reverse(
-                'delete_menu', target_menu_id=os.getenv('target_menu_id')
-            )
+            reverse('delete_menu', target_menu_id=os.getenv('target_menu_id'))
         )
         assert response.status_code == 404
         assert response.json()['detail'] == 'menu not found'

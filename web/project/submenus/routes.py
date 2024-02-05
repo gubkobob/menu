@@ -8,13 +8,13 @@ routes.py
 from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
+from project.database import get_session
+from project.exeptions import NotFoundException
+from project.menus.schemas import MenuInSchema
+from project.models import Submenu
+from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_session
-from ..exeptions import NotFoundException
-from ..menus.schemas import MenuInSchema
-from ..models import Submenu
-from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from .schemas import SubMenuOutSchema
 from .services import (
     change_submenu,

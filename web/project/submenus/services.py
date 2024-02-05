@@ -1,17 +1,16 @@
 from typing import Sequence
 
-from sqlalchemy import delete, func, insert, select, update
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from ..exeptions import NotFoundException
-from ..menus.services import get_menu
-from ..models import Dish, Menu, Submenu
-from ..services_overal import (
+from project.exeptions import NotFoundException
+from project.menus.services import get_menu
+from project.models import Dish, Menu, Submenu
+from project.services_overal import (
     clear_namespace_from_cache,
     delete_data_from_cache,
     get_data_from_cache,
     set_data_to_cache,
 )
+from sqlalchemy import delete, func, insert, select, update
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def get_submenu(

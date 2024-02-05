@@ -7,14 +7,14 @@ routes.py
 from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
+from project.database import get_session
+from project.exeptions import NotFoundException
+from project.models import Menu
+from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_session
-from ..exeptions import NotFoundException
-from ..menus.schemas import MenuInSchema, MenuOutSchema
-from ..menus.services import change_menu, delete_menu, get_menu, get_menus, post_menu
-from ..models import Menu
-from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
+from .schemas import MenuInSchema, MenuOutSchema
+from .services import change_menu, delete_menu, get_menu, get_menus, post_menu
 
 router = APIRouter(prefix='/menus', tags=['Menus'])
 
