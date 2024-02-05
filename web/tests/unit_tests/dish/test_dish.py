@@ -7,7 +7,9 @@ from sqlalchemy import select
 
 
 class TestDishes:
-    async def test_get_dishes_handler_success(self, create_dish, ac: AsyncClient, reverse):
+    async def test_get_dishes_handler_success(
+        self, create_dish, ac: AsyncClient, reverse
+    ):
         response = await ac.get(
             reverse(
                 'get_dishes',
@@ -58,7 +60,9 @@ class TestDishes:
         assert response.json()['id'] == dish.id
         assert response.json()['price'] == str(dish.price)
 
-    async def test_get_dish_handler_success(self, create_dish, ac: AsyncClient, reverse):
+    async def test_get_dish_handler_success(
+        self, create_dish, ac: AsyncClient, reverse
+    ):
         response = await ac.get(
             reverse(
                 'get_dish',
@@ -85,7 +89,9 @@ class TestDishes:
         assert response.status_code == 404
         assert response.json()['detail'] == 'dish not found'
 
-    async def test_patch_dish_handler_success(self, create_dish, ac: AsyncClient, reverse):
+    async def test_patch_dish_handler_success(
+        self, create_dish, ac: AsyncClient, reverse
+    ):
         response = await ac.patch(
             reverse(
                 'patch_dish',
@@ -132,7 +138,9 @@ class TestDishes:
         assert response.status_code == 404
         assert response.json()['detail'] == 'dish not found'
 
-    async def test_delete_dish_handler_success(self, create_dish, ac: AsyncClient, reverse):
+    async def test_delete_dish_handler_success(
+        self, create_dish, ac: AsyncClient, reverse
+    ):
         response = await ac.delete(
             reverse(
                 'delete_dish',

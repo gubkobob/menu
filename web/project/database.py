@@ -11,8 +11,10 @@ session = async_session()
 Base = declarative_base()
 
 
-async def get_session():
-    async with async_session() as session:
-        yield session
+async def get_db():
+    async with async_session() as db:
+        yield db
 
-redis_client = redis.Redis(host=f'{REDIS_HOST}', port=int(f'{REDIS_PORT}'), encoding='utf8')
+
+def get_redis_client():
+    return redis.Redis(host=f'{REDIS_HOST}', port=int(f'{REDIS_PORT}'), encoding='utf8')

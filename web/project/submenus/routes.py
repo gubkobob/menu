@@ -8,13 +8,13 @@ routes.py
 from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
+from project.database import get_db
+from project.exeptions import NotFoundException
+from project.menus.schemas import MenuInSchema
+from project.models import Submenu
+from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_session
-from ..exeptions import NotFoundException
-from ..menus.schemas import MenuInSchema
-from ..models import Submenu
-from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from .schemas import SubMenuOutSchema
 from .services import (
     change_submenu,
@@ -38,7 +38,7 @@ async def get_submenu_handler(
     response: Response,
     target_menu_id: str,
     target_submenu_id: str,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Submenu | dict[str, str]:
     """
     Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
@@ -49,8 +49,8 @@ async def get_submenu_handler(
         Идентификатор меню в БД
     :param target_submenu_id: str
         Идентификатор подменю в БД
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+   :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[SubMenuOutSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с подменю или ошибкой
@@ -58,7 +58,7 @@ async def get_submenu_handler(
 
     try:
         result = await get_submenu(
-            session=session,
+            db=db,
             target_menu_id=target_menu_id,
             target_submenu_id=target_submenu_id,
         )
@@ -78,7 +78,7 @@ async def get_submenu_handler(
 async def get_submenus_handler(
     response: Response,
     target_menu_id: str,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Sequence[Submenu] | dict[str, str]:
     """
     Эндпоинт возвращает все подменю
@@ -87,14 +87,14 @@ async def get_submenus_handler(
          Обьект ответа на запрос
     :param target_menu_id: str
         Идентификатор меню в БД
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+   :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[List[SubMenuOutSchema], NotFoundSchema]
         Pydantic-схема для фронтенда с подменю или ошибка
     """
     try:
-        result = await get_submenus(session=session, target_menu_id=target_menu_id)
+        result = await get_submenus(db=db, target_menu_id=target_menu_id)
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -112,7 +112,7 @@ async def post_submenus_handler(
     response: Response,
     target_menu_id: str,
     submenu: MenuInSchema,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Submenu | Exception:
     """
     Эндпоинт публикации подменю
@@ -123,15 +123,15 @@ async def post_submenus_handler(
         Идентификатор меню в БД
     :param submenu: MenuInSchema
         данные подменю из pedantic-схемы ввода данных
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+   :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[SubMenuOutSchema, dict]
         Pydantic-схема для фронтенда с подменю или ошибкой
     """
     try:
         new_submenu = await post_submenu(
-            session=session,
+            db=db,
             target_menu_id=target_menu_id,
             title=submenu.title,
             description=submenu.description,
@@ -153,7 +153,7 @@ async def patch_submenu_handler(
     target_menu_id: str,
     target_submenu_id: str,
     submenu: MenuInSchema,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Submenu | dict[str, str]:
     """
     Эндпоинт изменения меню
@@ -166,8 +166,8 @@ async def patch_submenu_handler(
         Идентификатор подменю в СУБД
     :param submenu: MenuInSchema
         данные подменю из pedantic-схемы ввода данных
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+   :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[SubMenuOutSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с подменю или ошибкой
@@ -175,7 +175,7 @@ async def patch_submenu_handler(
 
     try:
         changed_submenu = await change_submenu(
-            session=session,
+            db=db,
             target_menu_id=target_menu_id,
             target_submenu_id=target_submenu_id,
             title=submenu.title,
@@ -199,7 +199,7 @@ async def delete_submenu_handler(
     response: Response,
     target_menu_id: str,
     target_submenu_id: str,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> dict[str, bool | str]:
     """
     Эндпоинт удаления подменю по его id
@@ -210,15 +210,15 @@ async def delete_submenu_handler(
         Идентификатор меню в СУБД
     :param target_submenu_id: str
         Идентификатор подменю в СУБД
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+   :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[CorrectDeleteSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
         await delete_submenu(
-            session=session,
+            db=db,
             target_menu_id=target_menu_id,
             target_submenu_id=target_submenu_id,
         )

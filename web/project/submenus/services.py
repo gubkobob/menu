@@ -1,29 +1,26 @@
 from typing import Sequence
 
+from project.database import get_redis_client
+from project.exeptions import NotFoundException
+from project.menus.services import get_menu
+from project.models import Dish, Menu, Submenu
+from project.services_overal import RedisCache
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..exeptions import NotFoundException
-from ..menus.services import get_menu
-from ..models import Dish, Menu, Submenu
-from ..services_overal import (
-    clear_namespace_from_cache,
-    delete_data_from_cache,
-    get_data_from_cache,
-    set_data_to_cache,
-)
+cache = RedisCache(get_redis_client())
 
 
 async def get_submenu(
-    session: AsyncSession, target_menu_id: str, target_submenu_id: str
+    db: AsyncSession, target_menu_id: str, target_submenu_id: str
 ) -> Submenu:
-    await get_menu(session=session, target_menu_id=target_menu_id)
+    await get_menu(db=db, target_menu_id=target_menu_id)
     key_submenu = '/'.join([target_menu_id, target_submenu_id])
-    data = get_data_from_cache(key=key_submenu)
+    data = cache.get_data_from_cache(key=key_submenu)
     if data is not None:
         result = data
     else:
-        q = await session.execute(
+        q = await db.execute(
             select(
                 Submenu.id,
                 Submenu.description,
@@ -39,18 +36,18 @@ async def get_submenu(
             raise NotFoundException(
                 error_type='NO SUBMENU', error_message='submenu not found'
             )
-        set_data_to_cache(key=key_submenu, value=result)
+        cache.set_data_to_cache(key=key_submenu, value=result)
     return result
 
 
-async def get_submenus(session: AsyncSession, target_menu_id: str) -> Sequence[Submenu]:
-    await get_menu(session=session, target_menu_id=target_menu_id)
+async def get_submenus(db: AsyncSession, target_menu_id: str) -> Sequence[Submenu]:
+    await get_menu(db=db, target_menu_id=target_menu_id)
     key_submenus = '/'.join([target_menu_id, 'submenus'])
-    data = get_data_from_cache(key=key_submenus)
+    data = cache.get_data_from_cache(key=key_submenus)
     if data is not None:
         submenus = data
     else:
-        q = await session.execute(
+        q = await db.execute(
             select(
                 Submenu.id,
                 Submenu.description,
@@ -62,73 +59,73 @@ async def get_submenus(session: AsyncSession, target_menu_id: str) -> Sequence[S
             .group_by(Submenu.id)
         )
         submenus = q.all()
-        set_data_to_cache(key=key_submenus, value=submenus)
+        cache.set_data_to_cache(key=key_submenus, value=submenus)
     return submenus
 
 
 async def post_submenu(
-    session: AsyncSession, target_menu_id: str, title: str, description: str
+    db: AsyncSession, target_menu_id: str, title: str, description: str
 ) -> Submenu:
-    menu = await get_menu(session=session, target_menu_id=target_menu_id)
+    menu = await get_menu(db=db, target_menu_id=target_menu_id)
 
-    insert_submenu_query = await session.execute(
+    insert_submenu_query = await db.execute(
         insert(Submenu).values(title=title, description=description, menu_id=menu.id)
     )
     new_submenu_id = insert_submenu_query.inserted_primary_key[0]
-    await session.commit()
-    q = await session.execute(select(Submenu).where(Submenu.id == new_submenu_id))
+    await db.commit()
+    q = await db.execute(select(Submenu).where(Submenu.id == new_submenu_id))
     inserted_submenu = q.scalars().one_or_none()
 
     key_submenus = '/'.join([target_menu_id, 'submenus'])
-    delete_data_from_cache('all_menus', target_menu_id, key_submenus)
+    cache.delete_data_from_cache('all_menus', target_menu_id, key_submenus)
 
     return inserted_submenu
 
 
 async def delete_submenu(
-    session: AsyncSession, target_menu_id: str, target_submenu_id: str
+    db: AsyncSession, target_menu_id: str, target_submenu_id: str
 ):
     await get_submenu(
-        session=session,
+        db=db,
         target_menu_id=target_menu_id,
         target_submenu_id=target_submenu_id,
     )
-    await session.execute(
+    await db.execute(
         delete(Submenu).where(
             Submenu.id == target_submenu_id, Submenu.menu_id == target_menu_id
         )
     )
-    await session.commit()
+    await db.commit()
     key_submenus = '/'.join([target_menu_id, 'submenus'])
     key_submenu = '/'.join([target_menu_id, target_submenu_id])
-    delete_data_from_cache('all_menus', target_menu_id, key_submenu, key_submenus)
-    clear_namespace_from_cache(key_submenu)
+    cache.delete_data_from_cache('all_menus', target_menu_id, key_submenu, key_submenus)
+    cache.clear_namespace_from_cache(key_submenu)
 
 
 async def change_submenu(
-    session: AsyncSession,
+    db: AsyncSession,
     target_menu_id: str,
     target_submenu_id: str,
     title: str,
     description: str,
 ) -> Submenu:
     await get_submenu(
-        session=session,
+        db=db,
         target_submenu_id=target_submenu_id,
         target_menu_id=target_menu_id,
     )
 
-    await session.execute(
+    await db.execute(
         update(Submenu)
         .values(title=title, description=description)
         .where(Submenu.id == target_submenu_id)
     )
-    await session.commit()
+    await db.commit()
 
-    q = await session.execute(select(Submenu).where(Submenu.id == target_submenu_id))
+    q = await db.execute(select(Submenu).where(Submenu.id == target_submenu_id))
     changed_submenu = q.scalars().one_or_none()
 
     key_submenu = '/'.join([target_menu_id, target_submenu_id])
     key_submenus = '/'.join([target_menu_id, 'submenus'])
-    delete_data_from_cache(key_submenu, key_submenus)
+    cache.delete_data_from_cache(key_submenu, key_submenus)
     return changed_submenu

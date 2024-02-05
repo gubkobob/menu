@@ -7,29 +7,25 @@ from sqlalchemy import select
 
 
 class TestSubmenus:
-    async def test_get_submenus_handler_success(self, create_submenu, ac: AsyncClient, reverse):
+    async def test_get_submenus_handler_success(
+        self, create_submenu, ac: AsyncClient, reverse
+    ):
         response = await ac.get(
-            reverse(
-                'get_submenus', target_menu_id=os.getenv('target_menu_id')
-            )
+            reverse('get_submenus', target_menu_id=os.getenv('target_menu_id'))
         )
         assert response.status_code == 200
         assert response.json() != []
 
     async def test_get_submenus_handler_empty_list(self, ac: AsyncClient, reverse):
         response = await ac.get(
-            reverse(
-                'get_submenus', target_menu_id=os.getenv('target_menu_id')
-            )
+            reverse('get_submenus', target_menu_id=os.getenv('target_menu_id'))
         )
         assert response.status_code == 200
         assert response.json() == []
 
     async def test_post_submenu_handler_success(self, ac: AsyncClient, reverse):
         response = await ac.post(
-            reverse(
-                'post_submenus', target_menu_id=os.getenv('target_menu_id')
-            ),
+            reverse('post_submenus', target_menu_id=os.getenv('target_menu_id')),
             json={'title': 'My submenu 4', 'description': 'My submenu description 4'},
         )
         inserted_submenu_id = response.json()['id']
@@ -48,7 +44,9 @@ class TestSubmenus:
         assert response.json()['description'] == submenu.description
         assert response.json()['id'] == submenu.id
 
-    async def test_get_submenu_handler_success(self, create_submenu, ac: AsyncClient, reverse):
+    async def test_get_submenu_handler_success(
+        self, create_submenu, ac: AsyncClient, reverse
+    ):
         response = await ac.get(
             reverse(
                 'get_submenu',
@@ -61,7 +59,9 @@ class TestSubmenus:
         assert response.json()['description'] == os.getenv('target_submenu_description')
         assert response.json()['id'] == os.getenv('target_submenu_id')
 
-    async def test_get_submenu_handler_not_found_submenu(self, ac: AsyncClient, reverse):
+    async def test_get_submenu_handler_not_found_submenu(
+        self, ac: AsyncClient, reverse
+    ):
         response = await ac.get(
             reverse(
                 'get_submenu',
@@ -72,7 +72,9 @@ class TestSubmenus:
         assert response.status_code == 404
         assert response.json()['detail'] == 'submenu not found'
 
-    async def test_patch_submenu_handler_success(self, create_submenu, ac: AsyncClient, reverse):
+    async def test_patch_submenu_handler_success(
+        self, create_submenu, ac: AsyncClient, reverse
+    ):
         response = await ac.patch(
             reverse(
                 'patch_submenu',
@@ -98,7 +100,9 @@ class TestSubmenus:
         assert response.json()['description'] == submenu.description
         assert response.json()['id'] == submenu.id
 
-    async def test_patch_submenu_handler_submenu_not_found(self, ac: AsyncClient, reverse):
+    async def test_patch_submenu_handler_submenu_not_found(
+        self, ac: AsyncClient, reverse
+    ):
         response = await ac.patch(
             reverse(
                 'patch_submenu',
@@ -114,7 +118,8 @@ class TestSubmenus:
         assert response.json()['detail'] == 'submenu not found'
 
     async def test_delete_submenu_handler_success(
-            self, create_submenu, ac: AsyncClient, reverse):
+        self, create_submenu, ac: AsyncClient, reverse
+    ):
         response = await ac.delete(
             reverse(
                 'delete_submenu',
@@ -126,7 +131,9 @@ class TestSubmenus:
         assert response.json()['status'] is True
         assert response.json()['message'] == 'The submenu has been deleted'
 
-    async def test_delete_submenu_handler_not_found_submenu(self, ac: AsyncClient, reverse):
+    async def test_delete_submenu_handler_not_found_submenu(
+        self, ac: AsyncClient, reverse
+    ):
         response = await ac.delete(
             reverse(
                 'delete_submenu',

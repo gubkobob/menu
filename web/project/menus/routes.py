@@ -7,14 +7,14 @@ routes.py
 from typing import Sequence, Union
 
 from fastapi import APIRouter, Depends, Response
+from project.database import get_db
+from project.exeptions import NotFoundException
+from project.models import Menu
+from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..database import get_session
-from ..exeptions import NotFoundException
-from ..menus.schemas import MenuInSchema, MenuOutSchema
-from ..menus.services import change_menu, delete_menu, get_menu, get_menus, post_menu
-from ..models import Menu
-from ..schemas_overal import CorrectDeleteSchema, NotFoundSchema
+from .schemas import MenuInSchema, MenuOutSchema
+from .services import change_menu, delete_menu, get_menu, get_menus, post_menu
 
 router = APIRouter(prefix='/menus', tags=['Menus'])
 
@@ -29,7 +29,7 @@ router = APIRouter(prefix='/menus', tags=['Menus'])
 async def get_menu_handler(
     response: Response,
     target_menu_id: str,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Menu | dict[str, str]:
     """
     Эндпоинт возвращает меню по идентификатору или сообщение об ошибке
@@ -38,14 +38,14 @@ async def get_menu_handler(
          Обьект ответа на запрос
     :param target_menu_id: str
         Идентификатор меню в БД
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+    :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[MenuOutSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с меню или ошибкой
     """
     try:
-        result = await get_menu(session=session, target_menu_id=target_menu_id)
+        result = await get_menu(db=db, target_menu_id=target_menu_id)
     except NotFoundException as e:
         response.status_code = 404
         result = e.answer()
@@ -61,21 +61,21 @@ async def get_menu_handler(
 )
 async def get_menus_handler(
     response: Response,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Sequence[Menu]:
     """
     Эндпоинт возвращает все меню
     \f
     :param response: Response
          Обьект ответа на запрос
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+    :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: List[MenuOutSchema]
         Pydantic-схема для фронтенда с меню
     """
 
-    result = await get_menus(session=session)
+    result = await get_menus(db=db)
     return result
 
 
@@ -89,7 +89,7 @@ async def get_menus_handler(
 async def post_menus_handler(
     response: Response,
     menu: MenuInSchema,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Menu | Exception:
     """
     Эндпоинт публикации меню
@@ -98,15 +98,15 @@ async def post_menus_handler(
          Обьект ответа на запрос
     :param menu: MenuInSchema
         данные меню из pedantic-схемы ввода данных
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+     :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[MenuOutSchema, dict]
         Pydantic-схема для фронтенда с меню или ошибкой
     """
     try:
         new_menu = await post_menu(
-            session=session, title=menu.title, description=menu.description
+            db=db, title=menu.title, description=menu.description
         )
     except Exception as e:
         return e
@@ -124,7 +124,7 @@ async def patch_menu_handler(
     response: Response,
     target_menu_id: str,
     menu: MenuInSchema,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> Menu | dict[str, str]:
     """
     Эндпоинт изменения меню
@@ -135,8 +135,8 @@ async def patch_menu_handler(
         Идентификатор меню в СУБД
     :param menu: MenuInSchema
         данные меню из pedantic-схемы ввода данных
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+     :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[MenuOutSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с меню или ошибкой
@@ -144,7 +144,7 @@ async def patch_menu_handler(
 
     try:
         changed_menu = await change_menu(
-            session=session,
+            db=db,
             target_menu_id=target_menu_id,
             title=menu.title,
             description=menu.description,
@@ -166,7 +166,7 @@ async def patch_menu_handler(
 async def delete_menu_handler(
     response: Response,
     target_menu_id: str,
-    session: AsyncSession = Depends(get_session),
+    db: AsyncSession = Depends(get_db),
 ) -> dict[str, bool | str]:
     """
     Эндпоинт удаления меню по его id
@@ -175,14 +175,14 @@ async def delete_menu_handler(
          Обьект ответа на запрос
     :param target_menu_id: str
         Идентификатор меню в СУБД
-    :param session: Asyncsession
-        Экземпляр сессии из sqlalchemy
+    :param db: Asyncsession
+        Экземпляр базы данных
 
     :return: Union[CorrectDeleteSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
-        await delete_menu(session=session, target_menu_id=target_menu_id)
+        await delete_menu(db=db, target_menu_id=target_menu_id)
         return {'status': True, 'message': 'The menu has been deleted'}
     except NotFoundException as e:
         response.status_code = 404

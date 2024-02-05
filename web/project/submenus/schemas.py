@@ -5,7 +5,7 @@ schemas.py
  и обмена данных между сервисами.
 
 """
-from ..menus.schemas import BaseMenu
+from project.menus.schemas import BaseMenu
 
 
 class SubMenuOutSchema(BaseMenu):

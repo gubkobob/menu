@@ -4,34 +4,75 @@ from typing import AsyncGenerator
 
 import pytest
 from httpx import AsyncClient
-
-from ..project.database import Base, async_session, engine, redis_client
-from ..project.dishes.services import post_dish
-from ..project.main import app
-from ..project.menus.services import post_menu
-from ..project.submenus.services import post_submenu
+from project.database import Base, async_session, engine, redis_client
+from project.dishes.services import post_dish
+from project.main import app
+from project.menus.services import post_menu
+from project.submenus.services import post_submenu
 
 
 def reverse_path(route_name: str, **kwargs) -> str | None:
     routes = {
-        'get_menu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}',
-        'get_menus': '/api/v1/menus',
-        'post_menus': '/api/v1/menus',
-        'patch_menu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}',
-        'delete_menu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}',
-        'get_submenu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}',
-        'get_submenus': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus',
-        'post_submenus': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus',
-        'patch_submenu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}',
-        'delete_submenu': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}',
-        'get_dish': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/'
-                    f'{kwargs.get("target_submenu_id", "")}/dishes/{kwargs.get("target_dish_id", "")}',
-        'get_dishes': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}/dishes',
-        'post_dishes': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/{kwargs.get("target_submenu_id", "")}/dishes',
-        'patch_dish': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/'
-                      f'{kwargs.get("target_submenu_id", "")}/dishes/{kwargs.get("target_dish_id", "")}',
-        'delete_dish': f'/api/v1/menus/{kwargs.get("target_menu_id", "")}/submenus/'
-                       f'{kwargs.get("target_submenu_id", "")}/dishes/{kwargs.get("target_dish_id", "")}',
+        'get_menu': app.url_path_for(
+            'get_menu_handler', target_menu_id=kwargs.get('target_menu_id')
+        ),
+        'get_menus': app.url_path_for('get_menus_handler'),
+        'post_menus': app.url_path_for('post_menus_handler'),
+        'patch_menu': app.url_path_for(
+            'patch_menu_handler', target_menu_id=kwargs.get('target_menu_id')
+        ),
+        'delete_menu': app.url_path_for(
+            'delete_menu_handler', target_menu_id=kwargs.get('target_menu_id')
+        ),
+        'get_submenu': app.url_path_for(
+            'get_submenu_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+        ),
+        'get_submenus': app.url_path_for(
+            'get_submenus_handler', target_menu_id=kwargs.get('target_menu_id')
+        ),
+        'post_submenus': app.url_path_for(
+            'post_submenus_handler', target_menu_id=kwargs.get('target_menu_id')
+        ),
+        'patch_submenu': app.url_path_for(
+            'patch_submenu_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+        ),
+        'delete_submenu': app.url_path_for(
+            'delete_submenu_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+        ),
+        'get_dish': app.url_path_for(
+            'get_dish_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+            target_dish_id=kwargs.get('target_dish_id'),
+        ),
+        'get_dishes': app.url_path_for(
+            'get_dishes_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+        ),
+        'post_dishes': app.url_path_for(
+            'post_dishes_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+        ),
+        'patch_dish': app.url_path_for(
+            'patch_dish_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+            target_dish_id=kwargs.get('target_dish_id'),
+        ),
+        'delete_dish': app.url_path_for(
+            'delete_dish_handler',
+            target_menu_id=kwargs.get('target_menu_id'),
+            target_submenu_id=kwargs.get('target_submenu_id'),
+            target_dish_id=kwargs.get('target_dish_id'),
+        ),
     }
 
     return routes.get(route_name)
