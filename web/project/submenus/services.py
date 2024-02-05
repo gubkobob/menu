@@ -2,7 +2,8 @@ from typing import Sequence
 
 from project.database import get_redis_client
 from project.exeptions import NotFoundException
-from project.menus.services import get_menu
+
+# from project.menus.services import get_menu
 from project.models import Dish, Menu, Submenu
 from project.services_overal import RedisCache
 from sqlalchemy import delete, func, insert, select, update
@@ -14,7 +15,7 @@ cache = RedisCache(get_redis_client())
 async def get_submenu(
     db: AsyncSession, target_menu_id: str, target_submenu_id: str
 ) -> Submenu:
-    await get_menu(db=db, target_menu_id=target_menu_id)
+    # await get_menu(db=db, target_menu_id=target_menu_id)
     key_submenu = '/'.join([target_menu_id, target_submenu_id])
     data = cache.get_data_from_cache(key=key_submenu)
     if data is not None:
@@ -41,7 +42,7 @@ async def get_submenu(
 
 
 async def get_submenus(db: AsyncSession, target_menu_id: str) -> Sequence[Submenu]:
-    await get_menu(db=db, target_menu_id=target_menu_id)
+    # await get_menu(db=db, target_menu_id=target_menu_id)
     key_submenus = '/'.join([target_menu_id, 'submenus'])
     data = cache.get_data_from_cache(key=key_submenus)
     if data is not None:
@@ -66,10 +67,10 @@ async def get_submenus(db: AsyncSession, target_menu_id: str) -> Sequence[Submen
 async def post_submenu(
     db: AsyncSession, target_menu_id: str, title: str, description: str
 ) -> Submenu:
-    menu = await get_menu(db=db, target_menu_id=target_menu_id)
+    # menu = await get_menu(db=db, target_menu_id=target_menu_id)
 
     insert_submenu_query = await db.execute(
-        insert(Submenu).values(title=title, description=description, menu_id=menu.id)
+        insert(Submenu).values(title=title, description=description, menu_id=target_menu_id)
     )
     new_submenu_id = insert_submenu_query.inserted_primary_key[0]
     await db.commit()
@@ -82,9 +83,7 @@ async def post_submenu(
     return inserted_submenu
 
 
-async def delete_submenu(
-    db: AsyncSession, target_menu_id: str, target_submenu_id: str
-):
+async def delete_submenu(db: AsyncSession, target_menu_id: str, target_submenu_id: str):
     await get_submenu(
         db=db,
         target_menu_id=target_menu_id,

@@ -41,19 +41,19 @@ async def get_submenu_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Submenu | dict[str, str]:
     """
-    Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-    :param target_submenu_id: str
-        Идентификатор подменю в БД
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в БД
+     :param target_submenu_id: str
+         Идентификатор подменю в БД
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[SubMenuOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с подменю или ошибкой
+     :return: Union[SubMenuOutSchema, NotFoundSchema]
+         Pydantic-схема для фронтенда с подменю или ошибкой
     """
 
     try:
@@ -81,17 +81,17 @@ async def get_submenus_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Sequence[Submenu] | dict[str, str]:
     """
-    Эндпоинт возвращает все подменю
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт возвращает все подменю
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в БД
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[List[SubMenuOutSchema], NotFoundSchema]
-        Pydantic-схема для фронтенда с подменю или ошибка
+     :return: Union[List[SubMenuOutSchema], NotFoundSchema]
+         Pydantic-схема для фронтенда с подменю или ошибка
     """
     try:
         result = await get_submenus(db=db, target_menu_id=target_menu_id)
@@ -115,19 +115,19 @@ async def post_submenus_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Submenu | Exception:
     """
-    Эндпоинт публикации подменю
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-    :param submenu: MenuInSchema
-        данные подменю из pedantic-схемы ввода данных
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт публикации подменю
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в БД
+     :param submenu: MenuInSchema
+         данные подменю из pedantic-схемы ввода данных
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[SubMenuOutSchema, dict]
-        Pydantic-схема для фронтенда с подменю или ошибкой
+     :return: Union[SubMenuOutSchema, dict]
+         Pydantic-схема для фронтенда с подменю или ошибкой
     """
     try:
         new_submenu = await post_submenu(
@@ -156,21 +156,21 @@ async def patch_submenu_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Submenu | dict[str, str]:
     """
-    Эндпоинт изменения меню
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в СУБД
-    :param target_submenu_id: str
-        Идентификатор подменю в СУБД
-    :param submenu: MenuInSchema
-        данные подменю из pedantic-схемы ввода данных
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт изменения меню
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в СУБД
+     :param target_submenu_id: str
+         Идентификатор подменю в СУБД
+     :param submenu: MenuInSchema
+         данные подменю из pedantic-схемы ввода данных
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[SubMenuOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с подменю или ошибкой
+     :return: Union[SubMenuOutSchema, NotFoundSchema]
+         Pydantic-схема для фронтенда с подменю или ошибкой
     """
 
     try:
@@ -202,19 +202,19 @@ async def delete_submenu_handler(
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, bool | str]:
     """
-    Эндпоинт удаления подменю по его id
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в СУБД
-    :param target_submenu_id: str
-        Идентификатор подменю в СУБД
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт удаления подменю по его id
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в СУБД
+     :param target_submenu_id: str
+         Идентификатор подменю в СУБД
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[CorrectDeleteSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
+     :return: Union[CorrectDeleteSchema, NotFoundSchema]
+         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
         await delete_submenu(

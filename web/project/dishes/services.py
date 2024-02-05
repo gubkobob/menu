@@ -80,7 +80,10 @@ async def post_dish(
 
     insert_dish_query = await db.execute(
         insert(Dish).values(
-            title=title, description=description, price=price, submenu_id=target_submenu_id
+            title=title,
+            description=description,
+            price=price,
+            submenu_id=target_submenu_id,
         )
     )
     new_dish_id = insert_dish_query.inserted_primary_key[0]
@@ -92,7 +95,9 @@ async def post_dish(
     key_submenu = '/'.join([target_menu_id, target_submenu_id])
     key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
 
-    cache.delete_data_from_cache('all_menus', target_menu_id, key_submenu, key_submenus, key_dishes)
+    cache.delete_data_from_cache(
+        'all_menus', target_menu_id, key_submenu, key_submenus, key_dishes
+    )
     return inserted_dish
 
 
@@ -116,7 +121,9 @@ async def delete_dish(
     key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
     key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
 
-    cache.delete_data_from_cache('all_menus', target_menu_id, key_submenu, key_submenus, key_dishes, key_dish)
+    cache.delete_data_from_cache(
+        'all_menus', target_menu_id, key_submenu, key_submenus, key_dishes, key_dish
+    )
 
 
 async def change_dish(

@@ -38,21 +38,21 @@ async def get_dish_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Dish | dict[str, str]:
     """
-    Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-    :param target_submenu_id: str
-        Идентификатор подменю в БД
-    :param target_dish_id: str
-        Идентификатор блюда в БД
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в БД
+     :param target_submenu_id: str
+         Идентификатор подменю в БД
+     :param target_dish_id: str
+         Идентификатор блюда в БД
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[DishOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с блюдом или ошибкой
+     :return: Union[DishOutSchema, NotFoundSchema]
+         Pydantic-схема для фронтенда с блюдом или ошибкой
     """
 
     try:
@@ -82,19 +82,19 @@ async def get_dishes_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Sequence[Dish]:
     """
-    Эндпоинт возвращает все блюда
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-    :param target_submenu_id: str
-        Идентификатор подменю в БД
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт возвращает все блюда
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в БД
+     :param target_submenu_id: str
+         Идентификатор подменю в БД
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: List[DishOutSchema]
-        Pydantic-схема для фронтенда с блюдами
+     :return: List[DishOutSchema]
+         Pydantic-схема для фронтенда с блюдами
     """
     try:
         result = await get_dishes(
@@ -123,21 +123,21 @@ async def post_dishes_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Dish | Exception:
     """
-    Эндпоинт публикации подменю
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в БД
-    :param target_submenu_id: str
-        Идентификатор подменю в БД
-    :param dish: DishInSchema
-        данные блюда из pedantic-схемы ввода данных
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт публикации подменю
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в БД
+     :param target_submenu_id: str
+         Идентификатор подменю в БД
+     :param dish: DishInSchema
+         данные блюда из pedantic-схемы ввода данных
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[DishOutSchema, dict]
-        Pydantic-схема для фронтенда с блюдом или ошибкой
+     :return: Union[DishOutSchema, dict]
+         Pydantic-схема для фронтенда с блюдом или ошибкой
     """
     try:
         new_dish = await post_dish(
@@ -170,23 +170,23 @@ async def patch_dish_handler(
     db: AsyncSession = Depends(get_db),
 ) -> Dish | dict[str, str]:
     """
-    Эндпоинт изменения меню
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в СУБД
-    :param target_submenu_id: str
-        Идентификатор подменю в СУБД
-    :param target_dish_id: str
-        Идентификатор блюда в БД
-    :param dish: DishInSchema
-        данные блюда из pedantic-схемы ввода данных
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт изменения меню
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в СУБД
+     :param target_submenu_id: str
+         Идентификатор подменю в СУБД
+     :param target_dish_id: str
+         Идентификатор блюда в БД
+     :param dish: DishInSchema
+         данные блюда из pedantic-схемы ввода данных
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[DishOutSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с блюдом или ошибкой
+     :return: Union[DishOutSchema, NotFoundSchema]
+         Pydantic-схема для фронтенда с блюдом или ошибкой
     """
 
     try:
@@ -221,21 +221,21 @@ async def delete_dish_handler(
     db: AsyncSession = Depends(get_db),
 ) -> dict[str, bool | str]:
     """
-    Эндпоинт удаления блюда по его id
-    \f
-    :param response: Response
-         Обьект ответа на запрос
-    :param target_menu_id: str
-        Идентификатор меню в СУБД
-    :param target_submenu_id: str
-        Идентификатор подменю в СУБД
-    :param target_dish_id: str
-        Идентификатор блюда в БД
-   :param db: Asyncsession
-        Экземпляр базы данных
+     Эндпоинт удаления блюда по его id
+     \f
+     :param response: Response
+          Обьект ответа на запрос
+     :param target_menu_id: str
+         Идентификатор меню в СУБД
+     :param target_submenu_id: str
+         Идентификатор подменю в СУБД
+     :param target_dish_id: str
+         Идентификатор блюда в БД
+    :param db: Asyncsession
+         Экземпляр базы данных
 
-    :return: Union[CorrectDeleteSchema, NotFoundSchema]
-        Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
+     :return: Union[CorrectDeleteSchema, NotFoundSchema]
+         Pydantic-схема для фронтенда с флагом об удачной операции или ошибкой
     """
     try:
         await delete_dish(
