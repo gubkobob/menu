@@ -92,7 +92,7 @@ class MenuRepository:
 
         return await self.read_menu(target_menu_id=target_menu_id)
 
-    async def del_menu(self, target_menu_id: str) -> dict:
+    async def del_menu(self, target_menu_id: str) -> dict[str, bool | str]:
         await validate_menu(db=self.db, target_menu_id=target_menu_id)
         await self.db.execute(delete(Menu).where(Menu.id == target_menu_id))
         await self.db.commit()

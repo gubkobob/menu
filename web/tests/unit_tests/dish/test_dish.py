@@ -1,4 +1,5 @@
 import os
+from typing import Callable
 
 from httpx import AsyncClient
 from project.database import async_session
@@ -8,8 +9,8 @@ from sqlalchemy import select
 
 class TestDishes:
     async def test_get_dishes_handler_success(
-        self, create_dish, ac: AsyncClient, reverse
-    ):
+        self, create_dish: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(
             reverse(
                 'get_dishes',
@@ -20,7 +21,9 @@ class TestDishes:
         assert response.status_code == 200
         assert response.json() != []
 
-    async def test_get_dishes_handler_empty_list(self, ac: AsyncClient, reverse):
+    async def test_get_dishes_handler_empty_list(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(
             reverse(
                 'get_dishes',
@@ -31,7 +34,9 @@ class TestDishes:
         assert response.status_code == 200
         assert response.json() == []
 
-    async def test_post_dish_handler_success(self, ac: AsyncClient, reverse):
+    async def test_post_dish_handler_success(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.post(
             reverse(
                 'post_dishes',
@@ -61,7 +66,7 @@ class TestDishes:
         assert response.json()['price'] == str(dish.price)
 
     async def test_get_dish_handler_success(
-        self, create_dish, ac: AsyncClient, reverse
+        self, create_dish: Callable, ac: AsyncClient, reverse: Callable
     ):
         response = await ac.get(
             reverse(
@@ -77,7 +82,9 @@ class TestDishes:
         assert response.json()['price'] == os.getenv('target_dish_price')
         assert response.json()['id'] == os.getenv('target_dish_id')
 
-    async def test_get_dish_handler_not_found(self, ac: AsyncClient, reverse):
+    async def test_get_dish_handler_not_found(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(
             reverse(
                 'get_dish',
@@ -90,8 +97,8 @@ class TestDishes:
         assert response.json()['detail'] == 'dish not found'
 
     async def test_patch_dish_handler_success(
-        self, create_dish, ac: AsyncClient, reverse
-    ):
+        self, create_dish: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.patch(
             reverse(
                 'patch_dish',
@@ -121,7 +128,9 @@ class TestDishes:
         assert response.json()['id'] == dish.id
         assert response.json()['price'] == str(dish.price)
 
-    async def test_patch_dish_handler_not_found(self, ac: AsyncClient, reverse):
+    async def test_patch_dish_handler_not_found(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.patch(
             reverse(
                 'patch_dish',
@@ -139,8 +148,8 @@ class TestDishes:
         assert response.json()['detail'] == 'dish not found'
 
     async def test_delete_dish_handler_success(
-        self, create_dish, ac: AsyncClient, reverse
-    ):
+        self, create_dish: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.delete(
             reverse(
                 'delete_dish',
@@ -153,7 +162,9 @@ class TestDishes:
         assert response.json()['status'] is True
         assert response.json()['message'] == 'The dish has been deleted'
 
-    async def test_delete_dish_handler_not_found(self, ac: AsyncClient, reverse):
+    async def test_delete_dish_handler_not_found(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.delete(
             reverse(
                 'delete_dish',

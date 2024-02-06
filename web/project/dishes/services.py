@@ -71,7 +71,7 @@ class DishService:
         target_menu_id: str,
         target_submenu_id: str,
         target_dish_id: str,
-    ) -> dict:
+    ) -> dict[str, str | bool]:
         return await self.dish_repository.del_dish(
             target_menu_id=target_menu_id,
             target_submenu_id=target_submenu_id,

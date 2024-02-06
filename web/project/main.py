@@ -15,5 +15,5 @@ app.include_router(api_router, prefix='/api/v1')
 
 
 @app.on_event('shutdown')
-async def shutdown():
+async def shutdown() -> None:
     await engine.dispose()

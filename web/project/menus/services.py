@@ -37,7 +37,7 @@ class MenuService:
         self.cache.delete_data_from_cache('all_menus')
         return result
 
-    async def del_menu(self, target_menu_id: str) -> dict:
+    async def del_menu(self, target_menu_id: str) -> dict[str, str | bool]:
         result = await self.menu_repository.del_menu(target_menu_id=target_menu_id)
         self.cache.delete_data_from_cache('all_menus')
         self.cache.clear_namespace_from_cache(target_menu_id)

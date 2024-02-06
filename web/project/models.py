@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from .database import Base
 
 
-def generate_uuid():
+def generate_uuid() -> str:
     return str(uuid.uuid4())
 
 

@@ -28,7 +28,7 @@ async def get_submenu_handler(
     target_menu_id: str,
     target_submenu_id: str,
     response: SubmenuService = Depends(),
-) -> SubMenuOutSchema | dict[str, str]:
+) -> SubMenuOutSchema:
     """
      Эндпоинт возвращает подменю по идентификатору или сообщение об ошибке
      \f
@@ -58,7 +58,7 @@ async def get_submenu_handler(
 async def get_submenus_handler(
     target_menu_id: str,
     response: SubmenuService = Depends(),
-) -> list[SubMenuOutSchema] | dict[str, str]:
+) -> list[SubMenuOutSchema]:
     """
      Эндпоинт возвращает все подменю
      \f
@@ -84,7 +84,7 @@ async def post_submenus_handler(
     target_menu_id: str,
     submenu: MenuInSchema,
     response: SubmenuService = Depends(),
-) -> SubMenuOutSchema | dict[str, str]:
+) -> SubMenuOutSchema:
     """
      Эндпоинт публикации подменю
      \f
@@ -113,7 +113,7 @@ async def patch_submenu_handler(
     target_submenu_id: str,
     submenu: MenuInSchema,
     response: SubmenuService = Depends(),
-) -> SubMenuOutSchema | dict[str, str]:
+) -> SubMenuOutSchema:
     """
      Эндпоинт изменения меню
      \f
