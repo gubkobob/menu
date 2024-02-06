@@ -3,12 +3,12 @@ import os
 from typing import AsyncGenerator
 
 import pytest
+import redis
 from httpx import AsyncClient
-from project.database import Base, async_session, engine, redis_client
-from project.dishes.services import post_dish
+from project.database import Base, async_session, engine, get_redis_client
 from project.main import app
-from project.menus.services import post_menu
-from project.submenus.services import post_submenu
+from project.models import Dish, Menu, Submenu
+from sqlalchemy import insert, select
 
 
 def reverse_path(route_name: str, **kwargs) -> str | None:
@@ -84,7 +84,7 @@ def reverse():
 
 
 @pytest.fixture(scope='function')
-async def prepare_database():
+async def prepare_database(redis_client: redis.Redis = get_redis_client()):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     redis_client.flushdb()
@@ -94,7 +94,7 @@ async def prepare_database():
 
 
 @pytest.fixture(scope='session')
-async def prepare_database_for_integration_tests():
+async def prepare_database_for_integration_tests(redis_client: redis.Redis = get_redis_client()):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     redis_client.flushdb()
@@ -120,43 +120,59 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
 @pytest.fixture(scope='function')
 async def create_menu(monkeypatch):
     async with async_session() as session:
-        menu = await post_menu(
-            session=session, title='My menu 1', description='My menu description 1'
+        insert_menu_query = await session.execute(
+            insert(Menu).values(
+                title='My menu 1',
+                description='My menu description 1',
+            )
         )
+        new_menu_id = insert_menu_query.inserted_primary_key[0]
+        await session.commit()
+        q = await session.execute(select(Menu).where(Menu.id == new_menu_id))
+        inserted_menu = q.scalars().one_or_none()
 
-    monkeypatch.setenv('target_menu_id', menu.id)
-    monkeypatch.setenv('target_menu_title', menu.title)
-    monkeypatch.setenv('target_menu_description', menu.description)
+    monkeypatch.setenv('target_menu_id', inserted_menu.id)
+    monkeypatch.setenv('target_menu_title', inserted_menu.title)
+    monkeypatch.setenv('target_menu_description', inserted_menu.description)
 
 
 @pytest.fixture(scope='function')
 async def create_submenu(create_menu, monkeypatch):
     async with async_session() as session:
-        submenu = await post_submenu(
-            session=session,
-            target_menu_id=os.getenv('target_menu_id'),
-            title='My submenu 1',
-            description='My submenu description 1',
+        insert_submenu_query = await session.execute(
+            insert(Submenu).values(
+                title='My submenu 1',
+                description='My submenu description 1',
+                menu_id=os.getenv('target_menu_id'),
+            )
         )
+        new_submenu_id = insert_submenu_query.inserted_primary_key[0]
+        await session.commit()
+        q = await session.execute(select(Submenu).where(Submenu.id == new_submenu_id))
+        inserted_submenu = q.scalars().one_or_none()
 
-    monkeypatch.setenv('target_submenu_id', submenu.id)
-    monkeypatch.setenv('target_submenu_title', submenu.title)
-    monkeypatch.setenv('target_submenu_description', submenu.description)
+    monkeypatch.setenv('target_submenu_id', inserted_submenu.id)
+    monkeypatch.setenv('target_submenu_title', inserted_submenu.title)
+    monkeypatch.setenv('target_submenu_description', inserted_submenu.description)
 
 
 @pytest.fixture(scope='function')
 async def create_dish(create_submenu, monkeypatch):
     async with async_session() as session:
-        dish = await post_dish(
-            session=session,
-            target_menu_id=os.getenv('target_menu_id'),
-            target_submenu_id=os.getenv('target_submenu_id'),
-            title='My dish 1',
-            description='My dish description 1',
-            price='12.50',
+        insert_dish_query = await session.execute(
+            insert(Dish).values(
+                title='My dish 1',
+                description='My dish description 1',
+                price='12.50',
+                submenu_id=os.getenv('target_submenu_id'),
+            )
         )
+        new_dish_id = insert_dish_query.inserted_primary_key[0]
+        await session.commit()
+        q = await session.execute(select(Dish).where(Dish.id == new_dish_id))
+        inserted_dish = q.scalars().one_or_none()
 
-    monkeypatch.setenv('target_dish_id', dish.id)
-    monkeypatch.setenv('target_dish_title', dish.title)
-    monkeypatch.setenv('target_dish_description', dish.description)
-    monkeypatch.setenv('target_dish_price', str(dish.price))
+    monkeypatch.setenv('target_dish_id', inserted_dish.id)
+    monkeypatch.setenv('target_dish_title', inserted_dish.title)
+    monkeypatch.setenv('target_dish_description', inserted_dish.description)
+    monkeypatch.setenv('target_dish_price', str(inserted_dish.price))

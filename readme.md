@@ -47,6 +47,6 @@
 ### Для ручного тестирования эндпоинтов проекта удобно пользоваться следующим URL:
 - http://127.0.0.1:8000/docs
 ### Запрос на получение всех меню с количеством подменю и блюд находится:
-- menu/web/project/menus/services.py -> get_menu
+- menu/web/project/menus/repository.py -> read_menu
 ###  Аналог Django reverse() для FastAPI:
 - menu/web/tests/conftest.py -> reverse
