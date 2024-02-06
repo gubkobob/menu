@@ -32,7 +32,7 @@ async def get_menu_handler(
     \f
     :param target_menu_id: str
         Идентификатор меню в БД
-    :param response: Response
+    :param response: MenuService
          Обьект ответа на запрос из сервиса меню
 
     :return: Union[MenuOutSchema, NotFoundSchema]
@@ -55,7 +55,7 @@ async def get_menus_handler(
     """
     Эндпоинт возвращает все меню
     \f
-    :param response: Response
+    :param response: MenuService
          Обьект ответа на запрос из сервиса меню
 
     :return: List[MenuOutSchema]
@@ -81,7 +81,7 @@ async def post_menus_handler(
     \f
     :param menu: MenuInSchema
         данные меню из pedantic-схемы ввода данных
-    :param response: Response
+    :param response: MenuService
          Обьект ответа на запрос из сервиса меню
 
     :return: MenuOutSchema
@@ -109,7 +109,7 @@ async def patch_menu_handler(
         Идентификатор меню в СУБД
     :param menu: MenuInSchema
         данные меню из pedantic-схемы ввода данных
-    :param response: Response
+    :param response: MenuService
          Обьект ответа на запрос из сервиса меню
 
     :return: Union[MenuOutSchema, NotFoundSchema]
@@ -135,7 +135,7 @@ async def delete_menu_handler(
     \f
     :param target_menu_id: str
         Идентификатор меню в СУБД
-    :param response: Response
+    :param response: MenuService
          Обьект ответа на запрос из сервиса меню
 
     :return: Union[CorrectDeleteSchema, NotFoundSchema]

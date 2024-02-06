@@ -28,7 +28,7 @@ class MenuRepository:
         res_q = await self.db.execute(q)
         result = res_q.one_or_none()
         return MenuOutSchema(
-            id=str(result.Menu.id),
+            id=result.Menu.id,
             title=result.Menu.title,
             description=result.Menu.description,
             submenus_count=result.submenus_count,
@@ -50,7 +50,7 @@ class MenuRepository:
         menus_result = res_q.all()
         return [
             MenuOutSchema(
-                id=str(result.Menu.id),
+                id=result.Menu.id,
                 title=result.Menu.title,
                 description=result.Menu.description,
                 submenus_count=result.submenus_count,
