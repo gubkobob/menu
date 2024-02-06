@@ -52,7 +52,7 @@ class SubmenuService:
 
         return inserted_submenu
 
-    async def del_submenu(self, target_menu_id: str, target_submenu_id: str):
+    async def del_submenu(self, target_menu_id: str, target_submenu_id: str) -> dict[str, str | bool]:
         result = await self.submenu_repository.del_submenu(
             target_menu_id=target_menu_id, target_submenu_id=target_submenu_id
         )

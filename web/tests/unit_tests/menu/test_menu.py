@@ -1,4 +1,5 @@
 import os
+from typing import Callable
 
 from httpx import AsyncClient
 from project.database import async_session
@@ -8,18 +9,22 @@ from sqlalchemy import select
 
 class TestMenus:
     async def test_get_menus_handler_not_empty(
-        self, create_menu, ac: AsyncClient, reverse
-    ):
+        self, create_menu: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(reverse('get_menus'))
         assert response.status_code == 200
         assert response.json() != []
 
-    async def test_get_menus_handler_empty_list(self, ac: AsyncClient, reverse):
+    async def test_get_menus_handler_empty_list(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(reverse('get_menus'))
         assert response.status_code == 200
         assert response.json() == []
 
-    async def test_post_menu_handler_success(self, ac: AsyncClient, reverse):
+    async def test_post_menu_handler_success(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.post(
             reverse('post_menus'),
             json={'title': 'My menu 3', 'description': 'My menu description 3'},
@@ -39,8 +44,8 @@ class TestMenus:
         assert response.json()['id'] == menu.id
 
     async def test_get_menu_handler_success(
-        self, create_menu, ac: AsyncClient, reverse
-    ):
+        self, create_menu: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(
             reverse('get_menu', target_menu_id=os.getenv('target_menu_id'))
         )
@@ -49,7 +54,9 @@ class TestMenus:
         assert response.json()['description'] == os.getenv('target_menu_description')
         assert response.json()['id'] == os.getenv('target_menu_id')
 
-    async def test_get_menu_handler_not_found_menu(self, ac: AsyncClient, reverse):
+    async def test_get_menu_handler_not_found_menu(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.get(
             reverse('get_menu', target_menu_id=os.getenv('target_menu_id'))
         )
@@ -57,8 +64,8 @@ class TestMenus:
         assert response.json()['detail'] == 'menu not found'
 
     async def test_patch_menu_handler_success(
-        self, create_menu, ac: AsyncClient, reverse
-    ):
+        self, create_menu: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.patch(
             reverse('patch_menu', target_menu_id=os.getenv('target_menu_id')),
             json={
@@ -80,7 +87,9 @@ class TestMenus:
         assert response.json()['description'] == menu.description
         assert response.json()['id'] == menu.id
 
-    async def test_patch_menu_handler_not_found_menu(self, ac: AsyncClient, reverse):
+    async def test_patch_menu_handler_not_found_menu(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.patch(
             reverse('patch_menu', target_menu_id=os.getenv('target_menu_id')),
             json={
@@ -92,8 +101,8 @@ class TestMenus:
         assert response.json()['detail'] == 'menu not found'
 
     async def test_delete_menu_handler_success(
-        self, create_menu, ac: AsyncClient, reverse
-    ):
+        self, create_menu: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.delete(
             reverse('delete_menu', target_menu_id=os.getenv('target_menu_id'))
         )
@@ -101,7 +110,9 @@ class TestMenus:
         assert response.json()['status'] is True
         assert response.json()['message'] == 'The menu has been deleted'
 
-    async def test_delete_menu_handler_not_found_menu(self, ac: AsyncClient, reverse):
+    async def test_delete_menu_handler_not_found_menu(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
         response = await ac.delete(
             reverse('delete_menu', target_menu_id=os.getenv('target_menu_id'))
         )

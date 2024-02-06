@@ -1,9 +1,12 @@
 import asyncio
 import os
-from typing import AsyncGenerator
+from asyncio import AbstractEventLoop
+from collections.abc import AsyncIterator, Iterator
+from typing import Any, AsyncGenerator, Callable
 
 import pytest
 import redis
+from _pytest.monkeypatch import MonkeyPatch
 from httpx import AsyncClient
 from project.database import Base, async_session, engine, get_redis_client
 from project.main import app
@@ -11,80 +14,81 @@ from project.models import Dish, Menu, Submenu
 from sqlalchemy import insert, select
 
 
-def reverse_path(route_name: str, **kwargs) -> str | None:
-    routes = {
-        'get_menu': app.url_path_for(
-            'get_menu_handler', target_menu_id=kwargs.get('target_menu_id')
-        ),
-        'get_menus': app.url_path_for('get_menus_handler'),
-        'post_menus': app.url_path_for('post_menus_handler'),
-        'patch_menu': app.url_path_for(
-            'patch_menu_handler', target_menu_id=kwargs.get('target_menu_id')
-        ),
-        'delete_menu': app.url_path_for(
-            'delete_menu_handler', target_menu_id=kwargs.get('target_menu_id')
-        ),
-        'get_submenu': app.url_path_for(
-            'get_submenu_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-        ),
-        'get_submenus': app.url_path_for(
-            'get_submenus_handler', target_menu_id=kwargs.get('target_menu_id')
-        ),
-        'post_submenus': app.url_path_for(
-            'post_submenus_handler', target_menu_id=kwargs.get('target_menu_id')
-        ),
-        'patch_submenu': app.url_path_for(
-            'patch_submenu_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-        ),
-        'delete_submenu': app.url_path_for(
-            'delete_submenu_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-        ),
-        'get_dish': app.url_path_for(
-            'get_dish_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-            target_dish_id=kwargs.get('target_dish_id'),
-        ),
-        'get_dishes': app.url_path_for(
-            'get_dishes_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-        ),
-        'post_dishes': app.url_path_for(
-            'post_dishes_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-        ),
-        'patch_dish': app.url_path_for(
-            'patch_dish_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-            target_dish_id=kwargs.get('target_dish_id'),
-        ),
-        'delete_dish': app.url_path_for(
-            'delete_dish_handler',
-            target_menu_id=kwargs.get('target_menu_id'),
-            target_submenu_id=kwargs.get('target_submenu_id'),
-            target_dish_id=kwargs.get('target_dish_id'),
-        ),
-    }
+@pytest.fixture(scope='session')
+def reverse() -> Callable:
+    def reverse_path(route_name: str, **kwargs) -> str | None:
+        routes = {
+            'get_menu': app.url_path_for(
+                'get_menu_handler', target_menu_id=kwargs.get('target_menu_id')
+            ),
+            'get_menus': app.url_path_for('get_menus_handler'),
+            'post_menus': app.url_path_for('post_menus_handler'),
+            'patch_menu': app.url_path_for(
+                'patch_menu_handler', target_menu_id=kwargs.get('target_menu_id')
+            ),
+            'delete_menu': app.url_path_for(
+                'delete_menu_handler', target_menu_id=kwargs.get('target_menu_id')
+            ),
+            'get_submenu': app.url_path_for(
+                'get_submenu_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+            ),
+            'get_submenus': app.url_path_for(
+                'get_submenus_handler', target_menu_id=kwargs.get('target_menu_id')
+            ),
+            'post_submenus': app.url_path_for(
+                'post_submenus_handler', target_menu_id=kwargs.get('target_menu_id')
+            ),
+            'patch_submenu': app.url_path_for(
+                'patch_submenu_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+            ),
+            'delete_submenu': app.url_path_for(
+                'delete_submenu_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+            ),
+            'get_dish': app.url_path_for(
+                'get_dish_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+                target_dish_id=kwargs.get('target_dish_id'),
+            ),
+            'get_dishes': app.url_path_for(
+                'get_dishes_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+            ),
+            'post_dishes': app.url_path_for(
+                'post_dishes_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+            ),
+            'patch_dish': app.url_path_for(
+                'patch_dish_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+                target_dish_id=kwargs.get('target_dish_id'),
+            ),
+            'delete_dish': app.url_path_for(
+                'delete_dish_handler',
+                target_menu_id=kwargs.get('target_menu_id'),
+                target_submenu_id=kwargs.get('target_submenu_id'),
+                target_dish_id=kwargs.get('target_dish_id'),
+            ),
+        }
 
-    return routes.get(route_name)
+        return routes.get(route_name)
 
-
-@pytest.fixture(scope='function', autouse=True)
-def reverse():
-    yield reverse_path
+    return reverse_path
 
 
 @pytest.fixture(scope='function')
-async def prepare_database(redis_client: redis.Redis = get_redis_client()):
+async def prepare_database(
+    redis_client: redis.Redis = get_redis_client(),
+) -> AsyncIterator:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     redis_client.flushdb()
@@ -94,7 +98,9 @@ async def prepare_database(redis_client: redis.Redis = get_redis_client()):
 
 
 @pytest.fixture(scope='session')
-async def prepare_database_for_integration_tests(redis_client: redis.Redis = get_redis_client()):
+async def prepare_database_for_integration_tests(
+    redis_client: redis.Redis = get_redis_client(),
+) -> AsyncIterator:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     redis_client.flushdb()
@@ -104,7 +110,7 @@ async def prepare_database_for_integration_tests(redis_client: redis.Redis = get
 
 
 @pytest.fixture(scope='session')
-def event_loop(request):
+def event_loop(request: Any) -> Iterator[AbstractEventLoop]:
     """Create an instance of the default event loop for each test case"""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
@@ -118,7 +124,7 @@ async def ac() -> AsyncGenerator[AsyncClient, None]:
 
 
 @pytest.fixture(scope='function')
-async def create_menu(monkeypatch):
+async def create_menu(monkeypatch: MonkeyPatch) -> None:
     async with async_session() as session:
         insert_menu_query = await session.execute(
             insert(Menu).values(
@@ -137,7 +143,7 @@ async def create_menu(monkeypatch):
 
 
 @pytest.fixture(scope='function')
-async def create_submenu(create_menu, monkeypatch):
+async def create_submenu(create_menu: Callable, monkeypatch: MonkeyPatch) -> None:
     async with async_session() as session:
         insert_submenu_query = await session.execute(
             insert(Submenu).values(
@@ -157,7 +163,7 @@ async def create_submenu(create_menu, monkeypatch):
 
 
 @pytest.fixture(scope='function')
-async def create_dish(create_submenu, monkeypatch):
+async def create_dish(create_submenu: Callable, monkeypatch: MonkeyPatch) -> None:
     async with async_session() as session:
         insert_dish_query = await session.execute(
             insert(Dish).values(

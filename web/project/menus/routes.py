@@ -7,7 +7,6 @@ routes.py
 from typing import Union
 
 from fastapi import APIRouter, Depends
-from project.models import Menu
 from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 
 from .schemas import MenuInSchema, MenuOutSchema
@@ -101,7 +100,7 @@ async def patch_menu_handler(
     target_menu_id: str,
     menu: MenuInSchema,
     response: MenuService = Depends(),
-) -> Menu | dict[str, str]:
+) -> MenuOutSchema:
     """
     Эндпоинт изменения меню
     \f

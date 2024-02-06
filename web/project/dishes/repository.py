@@ -107,7 +107,7 @@ class DishRepository:
 
     async def del_dish(
         self, target_menu_id: str, target_submenu_id: str, target_dish_id: str
-    ) -> dict:
+    ) -> dict[str, str | bool]:
         await validate_dish(
             db=self.db,
             target_menu_id=target_menu_id,

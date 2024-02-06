@@ -61,7 +61,7 @@ class RedisCache:
         )
         return result
 
-    def delete_data_from_cache(self, *keys: str):
+    def delete_data_from_cache(self, *keys: str) -> None:
         """удаляет данные из кеша"""
         self.redis_client.delete(*keys)
 

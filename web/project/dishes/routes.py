@@ -31,7 +31,7 @@ async def get_dish_handler(
     target_submenu_id: str,
     target_dish_id: str,
     response: DishService = Depends(),
-) -> DishOutSchema | dict[str, str]:
+) -> DishOutSchema:
     """
      Эндпоинт возвращает блюдо по идентификатору или сообщение об ошибке
      \f
@@ -131,7 +131,7 @@ async def patch_dish_handler(
     target_dish_id: str,
     dish: DishInSchema,
     response: DishService = Depends(),
-) -> DishOutSchema | dict[str, str]:
+) -> DishOutSchema:
     """
      Эндпоинт изменения меню
      \f
