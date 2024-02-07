@@ -31,7 +31,7 @@ class DishService:
             target_submenu_id=target_submenu_id,
             target_dish_id=target_dish_id,
         )
-        # self.cache.set_data_to_cache(key=key_dish, value=result)
+        self.cache.set_data_to_cache(key=key_dish, value=result)
         return result
 
     async def read_dishes(
@@ -72,7 +72,7 @@ class DishService:
         target_submenu_id: str,
         target_dish_id: str,
     ) -> dict[str, str | bool]:
-        return await self.dish_repository.del_dish(
+        result = await self.dish_repository.del_dish(
             target_menu_id=target_menu_id,
             target_submenu_id=target_submenu_id,
             target_dish_id=target_dish_id,
@@ -84,6 +84,7 @@ class DishService:
         self.cache.delete_data_from_cache(
             'all_menus', target_menu_id, key_submenu, key_submenus, key_dishes, key_dish
         )
+        return result
 
     async def update_dish(
         self,
