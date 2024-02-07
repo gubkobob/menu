@@ -33,7 +33,6 @@ class DishRepository:
     async def read_dishes(
         self, target_menu_id: str, target_submenu_id: str
     ) -> list[DishOutSchema]:
-        # await validate_submenu(db=self.db, target_menu_id=target_menu_id, target_submenu_id=target_submenu_id)
         q = await self.db.execute(
             select(Dish).where(
                 Dish.submenu_id == target_submenu_id,

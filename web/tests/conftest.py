@@ -16,7 +16,7 @@ from sqlalchemy import insert, select
 
 @pytest.fixture(scope='session')
 def reverse() -> Callable:
-    def reverse_path(route_name: str, **kwargs) -> str | None:
+    def reverse_path(route_name: str, **kwargs: dict[str, str]) -> str | None:
         routes = {
             'get_menu': app.url_path_for(
                 'get_menu_handler', target_menu_id=kwargs.get('target_menu_id')
