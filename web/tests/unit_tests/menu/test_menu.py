@@ -118,3 +118,37 @@ class TestMenus:
         )
         assert response.status_code == 404
         assert response.json()['detail'] == 'menu not found'
+
+    async def test_get_menus_whole_handler_empty_list(
+        self, ac: AsyncClient, reverse: Callable
+    ) -> None:
+        response = await ac.get(reverse('get_menus_whole'))
+        assert response.status_code == 200
+        assert response.json()['menus'] == []
+
+    async def test_get_menus_whole_handler_not_empty_menus_empty_submenus(
+        self, create_menu: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
+        response = await ac.get(reverse('get_menus_whole'))
+        assert response.status_code == 200
+        assert response.json()['menus'] != []
+        assert response.json()['menus'][0]['submenus'] == []
+
+    async def test_get_menus_whole_handler_not_empty_menus_submenus_empty_dishes(
+            self, create_menu: Callable, create_submenu: Callable, ac: AsyncClient,
+            reverse: Callable
+    ) -> None:
+        response = await ac.get(reverse('get_menus_whole'))
+        assert response.status_code == 200
+        assert response.json()['menus'] != []
+        assert response.json()['menus'][0]['submenus'] != []
+        assert response.json()['menus'][0]['submenus'][0]['dishes'] == []
+
+    async def test_get_menus_whole_handler_not_empty_menus_submenus_dishes(
+        self, create_menu: Callable, create_submenu: Callable, create_dish: Callable, ac: AsyncClient, reverse: Callable
+    ) -> None:
+        response = await ac.get(reverse('get_menus_whole'))
+        assert response.status_code == 200
+        assert response.json()['menus'] != []
+        assert response.json()['menus'][0]['submenus'] != []
+        assert response.json()['menus'][0]['submenus'][0]['dishes'] != []
