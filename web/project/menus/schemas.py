@@ -6,6 +6,7 @@ schemas.py
 
 """
 
+from project.submenus.schemas import SubMenuFullOutSchema
 from pydantic import BaseModel
 
 
@@ -53,3 +54,35 @@ class MenuOutSchema(BaseMenu):
 
     class Config:
         orm_mode = True
+
+
+class MenuFullOutSchema(BaseMenu):
+    """
+    Pydantic-схема для вывода данных о меню c данными подменю и длюд
+
+    Parameters
+    ----------
+    id: str
+        Идентификатор меню в СУБД
+    submenus: list[SubMenuFullOutSchema]
+        список подменю
+    """
+
+    id: str
+    submenus: list[SubMenuFullOutSchema]
+
+    class Config:
+        orm_mode = True
+
+
+class MenuFullListOutSchema(BaseModel):
+    """
+    Pydantic-схема для вывода данных о списке меню c данными подменю и длюд
+
+    Parameters
+    ----------
+    menus: list[MenuFullOutSchema]
+        список меню
+    """
+
+    menus: list[MenuFullOutSchema]

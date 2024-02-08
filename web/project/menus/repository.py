@@ -1,9 +1,12 @@
+from typing import Any, Sequence
+
 from fastapi import Depends
 from project.database import get_db
 from project.models import Dish, Menu, Submenu
 from project.services_overal import validate_menu
-from sqlalchemy import delete, distinct, func, insert, select, update
+from sqlalchemy import Row, RowMapping, delete, distinct, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from .schemas import MenuInSchema, MenuOutSchema
 
@@ -58,6 +61,13 @@ class MenuRepository:
             )
             for result in menus_result
         ]
+
+    async def read_menus_whole(self) -> Sequence[Row | RowMapping | Any]:
+        q = select(Menu).options(selectinload(Menu.submenus).options(selectinload(Submenu.dishes)))
+
+        res_q = await self.db.execute(q)
+        menus_result = res_q.scalars().all()
+        return menus_result
 
     async def create_menu(self, menu: MenuInSchema) -> MenuOutSchema:
         insert_menu_query = await self.db.execute(

@@ -9,7 +9,7 @@ from typing import Union
 from fastapi import APIRouter, Depends
 from project.schemas_overal import CorrectDeleteSchema, NotFoundSchema
 
-from .schemas import MenuInSchema, MenuOutSchema
+from .schemas import MenuFullListOutSchema, MenuInSchema, MenuOutSchema
 from .services import MenuService
 
 router = APIRouter(prefix='/menus', tags=['Menus'])
@@ -142,3 +142,25 @@ async def delete_menu_handler(
     """
 
     return await response.del_menu(target_menu_id=target_menu_id)
+
+
+@router.get(
+    '/whole/',
+    summary='Получение всех меню с подменю и блюдами',
+    response_description='список меню с подменю и блюдами',
+    response_model=MenuFullListOutSchema,
+    status_code=200,
+)
+async def get_menus_whole_handler(
+    response: MenuService = Depends(),
+) -> MenuFullListOutSchema:
+    """
+    Эндпоинт возвращает все меню с подменю и блюдами
+    \f
+    :param response: MenuService
+         Обьект ответа на запрос из сервиса меню
+
+    :return: MenuFullListOutSchema
+        Pydantic-схема для фронтенда с меню с подменю и блюдами
+    """
+    return await response.read_menus_whole()

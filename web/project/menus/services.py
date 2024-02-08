@@ -4,7 +4,7 @@ from project.database import get_redis_client
 from project.services_overal import RedisCache
 
 from .repository import MenuRepository
-from .schemas import MenuInSchema, MenuOutSchema
+from .schemas import MenuFullListOutSchema, MenuInSchema, MenuOutSchema
 
 
 class MenuService:
@@ -51,3 +51,11 @@ class MenuService:
         )
         self.cache.delete_data_from_cache(target_menu_id, 'all_menus')
         return changed_menu
+
+    async def read_menus_whole(self) -> MenuFullListOutSchema:
+        # data = self.cache.get_data_from_cache(key='all_menus_whole')
+        # if data is not None:
+        #     return data
+        result = await self.menu_repository.read_menus_whole()
+        # self.cache.set_data_to_cache(key='all_menus_whole', value=result)
+        return MenuFullListOutSchema(menus=result)
