@@ -36,6 +36,7 @@ async def get_menu_handler(
 
     :return: Union[MenuOutSchema, NotFoundSchema]
         Pydantic-схема для фронтенда с меню или ошибкой
+
     """
 
     return await response.read_menu(target_menu_id=target_menu_id)
