@@ -22,6 +22,7 @@ def reverse() -> Callable:
                 'get_menu_handler', target_menu_id=kwargs.get('target_menu_id')
             ),
             'get_menus': app.url_path_for('get_menus_handler'),
+            'get_menus_whole': app.url_path_for('get_menus_whole_handler'),
             'post_menus': app.url_path_for('post_menus_handler'),
             'patch_menu': app.url_path_for(
                 'patch_menu_handler', target_menu_id=kwargs.get('target_menu_id')

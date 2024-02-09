@@ -5,20 +5,35 @@ schemas.py
  и обмена данных между сервисами.
 
 """
-from project.menus.schemas import BaseMenu
+
+from pydantic import BaseModel
 
 
-class DishInSchema(BaseMenu):
+class BaseDish(BaseModel):
     """
-    Pydantic-схема меню для ввода данных блюда
+    Базовая Pydantic-схема блюда
 
     Parameters
     ----------
+    title: str
+        Название блюда
+    description: str
+        Описание блюда
     price: str
         Цена блюда
     """
 
+    title: str
+    description: str
     price: str
+
+
+class DishInSchema(BaseDish):
+    """
+    Pydantic-схема блюда для ввода данных
+    """
+
+    ...
 
 
 class DishOutSchema(DishInSchema):
