@@ -29,7 +29,9 @@ class SubmenuService:
         result = await self.submenu_repository.read_submenu(
             target_menu_id=target_menu_id, target_submenu_id=target_submenu_id
         )
-        self.cache.set_data_to_cache(key=key_submenu, value=result, background_tasks=self.background_tasks)
+        self.cache.set_data_to_cache(
+            key=key_submenu, value=result, background_tasks=self.background_tasks
+        )
         return result
 
     async def read_submenus(self, target_menu_id: str) -> list[SubMenuOutSchema]:
@@ -40,7 +42,9 @@ class SubmenuService:
         submenus = await self.submenu_repository.read_submenus(
             target_menu_id=target_menu_id
         )
-        self.cache.set_data_to_cache(key=key_submenus, value=submenus, background_tasks=self.background_tasks)
+        self.cache.set_data_to_cache(
+            key=key_submenus, value=submenus, background_tasks=self.background_tasks
+        )
         return submenus
 
     async def create_submenu(
@@ -50,21 +54,35 @@ class SubmenuService:
             target_menu_id=target_menu_id, submenu=submenu
         )
         key_submenus = '/'.join([target_menu_id, 'submenus'])
-        self.cache.delete_data_from_cache('all_menus', 'all_menus_whole', target_menu_id,
-                                          key_submenus, background_tasks=self.background_tasks)
+        self.cache.delete_data_from_cache(
+            'all_menus',
+            'all_menus_whole',
+            target_menu_id,
+            key_submenus,
+            background_tasks=self.background_tasks,
+        )
 
         return inserted_submenu
 
-    async def del_submenu(self, target_menu_id: str, target_submenu_id: str) -> dict[str, str | bool]:
+    async def del_submenu(
+        self, target_menu_id: str, target_submenu_id: str
+    ) -> dict[str, str | bool]:
         result = await self.submenu_repository.del_submenu(
             target_menu_id=target_menu_id, target_submenu_id=target_submenu_id
         )
         key_submenus = '/'.join([target_menu_id, 'submenus'])
         key_submenu = '/'.join([target_menu_id, target_submenu_id])
         self.cache.delete_data_from_cache(
-            'all_menus', 'all_menus_whole', target_menu_id, key_submenu, key_submenus, background_tasks=self.background_tasks
+            'all_menus',
+            'all_menus_whole',
+            target_menu_id,
+            key_submenu,
+            key_submenus,
+            background_tasks=self.background_tasks,
         )
-        self.cache.clear_namespace_from_cache(key_submenu, background_tasks=self.background_tasks)
+        self.cache.clear_namespace_from_cache(
+            key_submenu, background_tasks=self.background_tasks
+        )
         return result
 
     async def update_submenu(
@@ -80,6 +98,10 @@ class SubmenuService:
         )
         key_submenu = '/'.join([target_menu_id, target_submenu_id])
         key_submenus = '/'.join([target_menu_id, 'submenus'])
-        self.cache.delete_data_from_cache('all_menus_whole', key_submenu, key_submenus,
-                                          background_tasks=self.background_tasks)
+        self.cache.delete_data_from_cache(
+            'all_menus_whole',
+            key_submenu,
+            key_submenus,
+            background_tasks=self.background_tasks,
+        )
         return changed_submenu

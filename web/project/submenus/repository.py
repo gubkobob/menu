@@ -103,7 +103,9 @@ class SubmenuRepository:
             target_menu_id=target_menu_id, target_submenu_id=target_submenu_id
         )
 
-    async def del_submenu(self, target_menu_id: str, target_submenu_id: str) -> dict[str, str | bool]:
+    async def del_submenu(
+        self, target_menu_id: str, target_submenu_id: str
+    ) -> dict[str, str | bool]:
         await validate_submenu(
             db=self.db,
             target_menu_id=target_menu_id,
