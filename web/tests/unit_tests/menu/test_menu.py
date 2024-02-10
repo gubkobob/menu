@@ -135,8 +135,11 @@ class TestMenus:
         assert response.json()['menus'][0]['submenus'] == []
 
     async def test_get_menus_whole_handler_not_empty_menus_submenus_empty_dishes(
-            self, create_menu: Callable, create_submenu: Callable, ac: AsyncClient,
-            reverse: Callable
+        self,
+        create_menu: Callable,
+        create_submenu: Callable,
+        ac: AsyncClient,
+        reverse: Callable,
     ) -> None:
         response = await ac.get(reverse('get_menus_whole'))
         assert response.status_code == 200
@@ -145,7 +148,12 @@ class TestMenus:
         assert response.json()['menus'][0]['submenus'][0]['dishes'] == []
 
     async def test_get_menus_whole_handler_not_empty_menus_submenus_dishes(
-        self, create_menu: Callable, create_submenu: Callable, create_dish: Callable, ac: AsyncClient, reverse: Callable
+        self,
+        create_menu: Callable,
+        create_submenu: Callable,
+        create_dish: Callable,
+        ac: AsyncClient,
+        reverse: Callable,
     ) -> None:
         response = await ac.get(reverse('get_menus_whole'))
         assert response.status_code == 200

@@ -52,10 +52,59 @@ services:
     networks:
       - custom
 
+  celery-beat:
+    container_name: celery-beat
+    build:
+      context: ./web
+      dockerfile: Dockerfile.celery
+    env_file:
+      - .env
+    environment:
+      - BROKER_URL=${BROKER_URL}
+    networks:
+      - custom
+    depends_on:
+      - rabbitmq
+      - db
+      - web
+      - redis
+    command: [ "celery", "-A", "admin_task:celery_app", "beat", "--loglevel=info" ]
+
+  celery_worker:
+    container_name: celery_worker
+    build:
+      context: ./web
+      dockerfile: Dockerfile.celery
+    volumes:
+      - ./admin:/usr/src/app/project/admin
+    env_file:
+      - .env
+    environment:
+      - BROKER_URL=${BROKER_URL}
+    networks:
+      - custom
+    depends_on:
+      - rabbitmq
+      - db
+      - web
+      - redis
+    command: [ "celery", "-A", "admin_task:celery_app", "worker", "--loglevel=info", "--concurrency", "1", "-P", "solo" ]
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: "rabbitmq:management"
+    env_file:
+      - .env
+    networks:
+      - custom
+    ports:
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+
 
 volumes:
   db_dev:
     name: db_dev
+
 
 networks:
   custom:

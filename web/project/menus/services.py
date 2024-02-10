@@ -23,7 +23,9 @@ class MenuService:
         if data is not None:
             return data
         result = await self.menu_repository.read_menu(target_menu_id=target_menu_id)
-        self.cache.set_data_to_cache(key=target_menu_id, value=result, background_tasks=self.background_tasks)
+        self.cache.set_data_to_cache(
+            key=target_menu_id, value=result, background_tasks=self.background_tasks
+        )
         return result
 
     async def read_menus(self) -> list[MenuOutSchema]:
@@ -31,18 +33,26 @@ class MenuService:
         if data is not None:
             return data
         result = await self.menu_repository.read_menus()
-        self.cache.set_data_to_cache(key='all_menus', value=result, background_tasks=self.background_tasks)
+        self.cache.set_data_to_cache(
+            key='all_menus', value=result, background_tasks=self.background_tasks
+        )
         return result
 
     async def create_menu(self, menu: MenuInSchema) -> MenuOutSchema:
         result = await self.menu_repository.create_menu(menu=menu)
-        self.cache.delete_data_from_cache('all_menus', 'all_menus_whole', background_tasks=self.background_tasks)
+        self.cache.delete_data_from_cache(
+            'all_menus', 'all_menus_whole', background_tasks=self.background_tasks
+        )
         return result
 
     async def del_menu(self, target_menu_id: str) -> dict[str, str | bool]:
         result = await self.menu_repository.del_menu(target_menu_id=target_menu_id)
-        self.cache.delete_data_from_cache('all_menus', 'all_menus_whole', background_tasks=self.background_tasks)
-        self.cache.clear_namespace_from_cache(target_menu_id, background_tasks=self.background_tasks)
+        self.cache.delete_data_from_cache(
+            'all_menus', 'all_menus_whole', background_tasks=self.background_tasks
+        )
+        self.cache.clear_namespace_from_cache(
+            target_menu_id, background_tasks=self.background_tasks
+        )
         return result
 
     async def update_menu(
@@ -51,8 +61,12 @@ class MenuService:
         changed_menu = await self.menu_repository.update_menu(
             target_menu_id=target_menu_id, menu=menu
         )
-        self.cache.delete_data_from_cache(target_menu_id, 'all_menus', 'all_menus_whole',
-                                          background_tasks=self.background_tasks)
+        self.cache.delete_data_from_cache(
+            target_menu_id,
+            'all_menus',
+            'all_menus_whole',
+            background_tasks=self.background_tasks,
+        )
         return changed_menu
 
     async def read_menus_whole(self) -> MenuFullListOutSchema:
@@ -61,6 +75,9 @@ class MenuService:
             return data
         result = await self.menu_repository.read_menus_whole()
         all_menus_whole = MenuFullListOutSchema(menus=result)
-        self.cache.set_data_to_cache(key='all_menus_whole', value=all_menus_whole,
-                                     background_tasks=self.background_tasks)
+        self.cache.set_data_to_cache(
+            key='all_menus_whole',
+            value=all_menus_whole,
+            background_tasks=self.background_tasks,
+        )
         return all_menus_whole

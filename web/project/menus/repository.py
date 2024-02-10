@@ -63,7 +63,9 @@ class MenuRepository:
         ]
 
     async def read_menus_whole(self) -> Sequence[Row | RowMapping | Any]:
-        q = select(Menu).options(selectinload(Menu.submenus).options(selectinload(Submenu.dishes)))
+        q = select(Menu).options(
+            selectinload(Menu.submenus).options(selectinload(Submenu.dishes))
+        )
 
         res_q = await self.db.execute(q)
         menus_result = res_q.scalars().all()
