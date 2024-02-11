@@ -1,7 +1,7 @@
-import redis
+import redis.asyncio as redis
 from fastapi import BackgroundTasks, Depends
-from project.database import get_redis_client
-from project.service_redis import RedisCache
+from project.database import get_async_redis_client
+from project.service_redis import AsyncRedisCache
 
 from .repository import DishRepository
 from .schemas import DishInSchema, DishOutSchema
@@ -11,11 +11,11 @@ class DishService:
     def __init__(
         self,
         dish_repository: DishRepository = Depends(),
-        redis_client: redis.Redis = Depends(get_redis_client),
+        redis_client: redis.Redis = Depends(get_async_redis_client),
         background_tasks: BackgroundTasks = None,
     ):
         self.dish_repository = dish_repository
-        self.cache = RedisCache(redis_client)
+        self.cache = AsyncRedisCache(redis_client)
         self.background_tasks = background_tasks
 
     async def read_dish(
@@ -25,7 +25,7 @@ class DishService:
         target_dish_id: str,
     ) -> DishOutSchema:
         key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
-        data = self.cache.get_data_from_cache(key=key_dish)
+        data = await self.cache.get_data_from_cache(key=key_dish)
         if data is not None:
             return data
         result = await self.dish_repository.read_dish(
@@ -33,7 +33,7 @@ class DishService:
             target_submenu_id=target_submenu_id,
             target_dish_id=target_dish_id,
         )
-        self.cache.set_data_to_cache(
+        await self.cache.set_data_to_cache(
             key=key_dish, value=result, background_tasks=self.background_tasks
         )
         return result
@@ -42,13 +42,13 @@ class DishService:
         self, target_menu_id: str, target_submenu_id: str
     ) -> list[DishOutSchema]:
         key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
-        data = self.cache.get_data_from_cache(key=key_dishes)
+        data = await self.cache.get_data_from_cache(key=key_dishes)
         if data is not None:
             return data
         result = await self.dish_repository.read_dishes(
             target_menu_id=target_menu_id, target_submenu_id=target_submenu_id
         )
-        self.cache.set_data_to_cache(
+        await self.cache.set_data_to_cache(
             key=key_dishes, value=result, background_tasks=self.background_tasks
         )
         return result
@@ -67,7 +67,7 @@ class DishService:
         key_submenus = '/'.join([target_menu_id, 'submenus'])
         key_submenu = '/'.join([target_menu_id, target_submenu_id])
         key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
-        self.cache.delete_data_from_cache(
+        await self.cache.delete_data_from_cache(
             'all_menus',
             'all_menus_whole',
             target_menu_id,
@@ -93,7 +93,7 @@ class DishService:
         key_submenu = '/'.join([target_menu_id, target_submenu_id])
         key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
         key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
-        self.cache.delete_data_from_cache(
+        await self.cache.delete_data_from_cache(
             'all_menus',
             'all_menus_whole',
             target_menu_id,
@@ -120,7 +120,7 @@ class DishService:
         )
         key_dish = '/'.join([target_menu_id, target_submenu_id, target_dish_id])
         key_dishes = '/'.join([target_menu_id, target_submenu_id, 'dishes'])
-        self.cache.delete_data_from_cache(
+        await self.cache.delete_data_from_cache(
             'all_menus_whole',
             key_dishes,
             key_dish,
