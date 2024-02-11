@@ -118,7 +118,7 @@ celery_app.conf.update(
     beat_schedule={
         'main': {
             'task': 'admin_task.main',
-            'schedule': timedelta(seconds=30),
+            'schedule': timedelta(seconds=15),
         },
     },
 )

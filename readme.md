@@ -46,7 +46,16 @@
 - docker compose -f docker-compose-test.yaml up --build
 ### Для ручного тестирования эндпоинтов проекта удобно пользоваться следующим URL:
 - http://127.0.0.1:8000/docs
+## 5. Комментарии:
 ### Запрос на получение всех меню с количеством подменю и блюд находится:
-- menu/web/project/menus/repository.py -> read_menu
+- menu/web/project/menus/repository.py -> read_menus
+###  Реализовать тестовый сценарий «Проверка кол-ва блюд и подменю в меню» из Postman с помощью pytest
+- menu/web/tests/integration_tests/test_check_nums_of_submenus_and_dishes_in_menu.py
+### Описать ручки API в соответствий c OpenAP
+- menu/web/swagger.json
 ###  Аналог Django reverse() для FastAPI:
 - menu/web/tests/conftest.py -> reverse
+###  Обновление меню из google sheets раз в 15 сек.
+- menu/web/admin_task.py
+###  Блюда по акции. Размер скидки (%) указывается в столбце G файла Menu.xlsx
+- menu/web/admin_task.py
