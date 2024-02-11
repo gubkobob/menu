@@ -1,6 +1,6 @@
 from typing import AsyncIterator
 
-import redis
+import redis.asyncio as redis
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
@@ -18,5 +18,5 @@ async def get_db() -> AsyncIterator:
         yield db
 
 
-def get_redis_client() -> redis.Redis:
+async def get_async_redis_client() -> redis.Redis:
     return redis.Redis(host=f'{REDIS_HOST}', port=int(f'{REDIS_PORT}'), encoding='utf8')

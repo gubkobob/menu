@@ -5,10 +5,9 @@ from collections.abc import AsyncIterator, Iterator
 from typing import Any, AsyncGenerator, Callable
 
 import pytest
-import redis
 from _pytest.monkeypatch import MonkeyPatch
 from httpx import AsyncClient
-from project.database import Base, async_session, engine, get_redis_client
+from project.database import Base, async_session, engine, get_async_redis_client
 from project.main import app
 from project.models import Dish, Menu, Submenu
 from sqlalchemy import insert, select
@@ -87,24 +86,22 @@ def reverse() -> Callable:
 
 
 @pytest.fixture(scope='function')
-async def prepare_database(
-    redis_client: redis.Redis = get_redis_client(),
-) -> AsyncIterator:
+async def prepare_database() -> AsyncIterator:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    redis_client.flushdb()
+    redis_cl = await get_async_redis_client()
+    await redis_cl.flushdb()
     yield
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest.fixture(scope='session')
-async def prepare_database_for_integration_tests(
-    redis_client: redis.Redis = get_redis_client(),
-) -> AsyncIterator:
+async def prepare_database_for_integration_tests() -> AsyncIterator:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    redis_client.flushdb()
+    redis_cl = await get_async_redis_client()
+    await redis_cl.flushdb()
     yield
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
