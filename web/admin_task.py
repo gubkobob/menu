@@ -62,7 +62,9 @@ async def read_excel_to_data(
     return {'menus': menus, 'submenus': submenus, 'dishes': dishes}
 
 
-async def read_gs_to_data() -> dict[str, list[MenuType] | list[SubmenuType] | list[DishType]]:
+async def read_gs_to_data() -> dict[
+    str, list[MenuType] | list[SubmenuType] | list[DishType]
+]:
     """
     Чтение файла Google sheet и преобразование его в нужный формат данных.
     """
@@ -125,7 +127,6 @@ celery_app.conf.update(
 
 
 async def main_async() -> None:
-
     # Закомментировать ненужное и оставить нужный сервис - чтение их exel/google sheets
     # current_data = await read_excel_to_data(filename=filename)
     current_data = await read_gs_to_data()

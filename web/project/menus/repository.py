@@ -3,7 +3,7 @@ from typing import Any, Sequence
 from fastapi import Depends
 from project.database import get_db
 from project.models import Dish, Menu, Submenu
-from project.services_overal import validate_menu
+from project.services_overal import get_dish_price_with_discount, validate_menu
 from sqlalchemy import Row, RowMapping, delete, distinct, func, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -68,8 +68,39 @@ class MenuRepository:
         )
 
         res_q = await self.db.execute(q)
-        menus_result = res_q.scalars().all()
-        return menus_result
+        menus_q = res_q.scalars().all()
+        menus = []
+        for menu in menus_q:
+            submenus = []
+            menu_data = {
+                'id': menu.id,
+                'title': menu.title,
+                'description': menu.description,
+            }
+            for submenu in menu.submenus:
+                dishes = []
+                submenu_data = {
+                    'id': submenu.id,
+                    'title': submenu.title,
+                    'description': submenu.description,
+                }
+                for dish in submenu.dishes:
+                    dish_price = await get_dish_price_with_discount(
+                        dish_id=dish.id, dish_price=dish.price
+                    )
+                    dish_data = {
+                        'id': dish.id,
+                        'title': dish.title,
+                        'description': dish.description,
+                        'price': dish_price,
+                    }
+                    dishes.append(dish_data)
+                submenu_data['dishes'] = dishes
+                submenus.append(submenu_data)
+            menu_data['submenus'] = submenus
+            menus.append(menu_data)
+
+        return menus
 
     async def create_menu(self, menu: MenuInSchema) -> MenuOutSchema:
         insert_menu_query = await self.db.execute(

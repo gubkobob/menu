@@ -1,7 +1,11 @@
 from fastapi import Depends
 from project.database import get_db
 from project.models import Dish
-from project.services_overal import validate_dish, validate_submenu
+from project.services_overal import (
+    get_dish_price_with_discount,
+    validate_dish,
+    validate_submenu,
+)
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,12 +26,15 @@ class DishRepository:
             target_dish_id=target_dish_id,
         )
         q = await self.db.execute(select(Dish).where(Dish.id == target_dish_id))
-        result = q.one_or_none()
+        dish = q.one_or_none()
+
         return DishOutSchema(
-            id=result.Dish.id,
-            title=result.Dish.title,
-            description=result.Dish.description,
-            price=result.Dish.price,
+            id=dish.Dish.id,
+            title=dish.Dish.title,
+            description=dish.Dish.description,
+            price=await get_dish_price_with_discount(
+                dish_id=dish.Dish.id, dish_price=dish.Dish.price
+            ),
         )
 
     async def read_dishes(
@@ -41,15 +48,18 @@ class DishRepository:
         dishes_result = q.all()
         if not dishes_result:
             return []
-        return [
-            DishOutSchema(
-                id=result.Dish.id,
-                title=result.Dish.title,
-                description=result.Dish.description,
-                price=result.Dish.price,
+        dishes = []
+        for dish in dishes_result:
+            dish_schema = DishOutSchema(
+                id=dish.Dish.id,
+                title=dish.Dish.title,
+                description=dish.Dish.description,
+                price=await get_dish_price_with_discount(
+                    dish_id=dish.Dish.id, dish_price=dish.Dish.price
+                ),
             )
-            for result in dishes_result
-        ]
+            dishes.append(dish_schema)
+        return dishes
 
     async def create_dish(
         self, target_menu_id: str, target_submenu_id: str, dish: DishInSchema
