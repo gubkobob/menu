@@ -8,7 +8,9 @@ from .database import get_async_redis_client
 
 
 class AsyncRedisCache:
-    def __init__(self, redis_client: redis.Redis = Depends(get_async_redis_client())) -> None:
+    def __init__(
+        self, redis_client: redis.Redis = Depends(get_async_redis_client)
+    ) -> None:
         self.redis_client = redis_client
 
     async def get_data_from_cache(self, key: str) -> Any | None:

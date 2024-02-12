@@ -1,4 +1,6 @@
-from project.database import async_session
+import pickle
+
+from project.database import async_session, get_async_redis_client
 from project.models import Dish, Menu, Submenu
 from sqlalchemy import delete, select
 
@@ -108,6 +110,12 @@ async def update_dish_data_from_file_to_db(dishes: list[DishType]) -> None:
 
 
 async def update_or_create_dish(dish: DishType) -> None:
+    redis_client = await get_async_redis_client()
+    if dish[6]:
+        key_discount = '/'.join([dish[2], 'discount'])
+        val_bytes = pickle.dumps(dish[6])
+        await redis_client.set(key_discount, val_bytes)
+
     async with async_session() as session:
         result = await session.execute(
             select(Dish).filter(Dish.id == dish[2], Dish.submenu_id == dish[1])
@@ -116,22 +124,15 @@ async def update_or_create_dish(dish: DishType) -> None:
         if db_dish:
             db_dish.title = dish[3]
             db_dish.description = dish[4]
-            if dish[6]:
-                db_dish.price = str(float(dish[5]) * (100 - float(dish[6])) / 100)
-            else:
-                db_dish.price = dish[5]
+            db_dish.price = dish[5]
             await session.commit()
         else:
-            if dish[6]:
-                dish_price = str(float(dish[5]) * (100 - float(dish[6])) / 100)
-            else:
-                dish_price = dish[5]
             db_dish = Dish(
                 title=dish[3],
                 description=dish[4],
                 id=dish[2],
                 submenu_id=dish[1],
-                price=dish_price,
+                price=dish[5],
             )
             session.add(db_dish)
             await session.commit()
